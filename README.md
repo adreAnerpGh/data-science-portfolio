@@ -44,4 +44,14 @@ Each project follows a structured workflow, from data collection and cleaning to
 - Retrieval-Augmented Generation pipeline for document-based question answering  
 `nlp-projects/rag-agentive-ai.ipynb`
 
----
+-----------------------------------------------------------------------------------
+
+### Data Wrangling & Exploratory Analysis
+**US Election Data Analysis** *(University Project)*  
+- Data collection from public sources  
+- Data cleaning, merging, EDA, and focused analytical questions  
+📁 `data-wrangling-projects/us-election-analysis.ipynb`
+
+-----------------------------------------------------------------------------------
+
+
