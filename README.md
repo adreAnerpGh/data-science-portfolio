@@ -24,7 +24,7 @@ Each project follows a structured workflow, from data collection and cleaning to
 **End-to-End ML Classification** *(University Project)*  
 - Full machine learning pipeline from data exploration to model evaluation  
 - Comparison of multiple classification algorithms  
-`ml-projects/end-to-end-ml-classification.ipynb`
+[ml-projects/bank_marketing_campaign_classification.ipynb](ml-projects/bank_marketing_campaign_classification.ipynb)
 
 -----------------------------------------------------------------------------------
 
