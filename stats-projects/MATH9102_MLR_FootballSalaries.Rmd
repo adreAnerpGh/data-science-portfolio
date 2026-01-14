@@ -1,0 +1,1457 @@
+---
+title: "Statistical Analysis - Multiple Linear Regression - Football Salaries Dataset"
+subtitle: "PSI CA Part Three - Linear Regression"
+author: "Andrea Gehrpelli"
+date: ""
+output:
+  html_document:
+    toc: true       # Enables table of contents
+    toc_float: true # Makes the TOC float on the side
+    toc_depth: 5    # Specifies the depth of headers to include in TOC
+---
+
+### Introduction
+
+**Football Salaries Dataset**
+
+<https://www.kaggle.com/datasets/ultimus/football-salaries-dataset/data>
+
+Owner: <https://www.kaggle.com/ultimus>
+
+"Wages are up to date as of the summer transfer window of the 2023-24 season. Data was extracted from the game FM24. It contains data for 40,000 players. This is an updated and better version of my previous 2022 salaries dataset. It has more data, better features, and a cleaned/transformed version of it as well".
+
+**This analysis is based on a dataset that reflects players' salaries and related variables for only a single year. Therefore, we cannot observe how these variable values change for each player over time. The findings are limited to the snapshot provided by the dataset.**
+
+### 1. Describe Dataset
+
+The dataset used in this analysis is the cleaned version of the 2023-24 football player salary dataset, which provides an enhanced and transformed version of the original data. The cleaned dataset is preferred over the raw version as it has been processed to remove inconsistencies, errors, and duplicates, ensuring higher data quality for analysis. This dataset includes information about professional football players, focusing on various factors such as reputation, age, international appearances (Caps), and salary. The dataset also contains two merged categorical variables: EU Nationality, indicating EU versus non-EU players, and Based, representing the league or nation where the player's club is located, which serves as a multi-category nominal variable. Additionally, Top 5 League is a binary variable identifying whether the player's club competes in one of Europe’s top five leagues."
+
+This dataset includes information on the following variables:
+
+-   *Salary*: Annual salary of the player (in euros).
+-   *Age*: Player’s age in years.
+-   *Reputation*: Player’s reputation, scaled from 0 to 10,000.
+-   *Caps*: Number of international appearances the player has made.
+-   *Apps*: Total number of club appearances the player has made.
+-   *EU National*: Indicates if the player is an EU national (Y/N).
+-   *Is Top 5 League*: Indicates whether the player’s club is part of the top 5 leagues in Europe (Y/N).
+-   *Last Transfer Fee*: The fee paid by the current club to acquire the player, expressed in euros.
+-   *Begins*: Current player contract starting day, it will be merged from other dataset as a categorical variable.
+-   *Based*: Region where the player’s club is based, it will be merged from the other dataset as a categorical variable. This can help analyze salary differences by region.
+
+The primary goal is to explore how key factors such as age, reputation, caps, and nationality relate to annual salary. Additionally, it considers whether league status and region affect earnings. The cleaned dataset provides these insights as a snapshot for a single year, 2023-24.
+
+#### 1.1 Project Overview: Key Statistical Concepts and Definitions
+
+In this project, we explore foundational statistical concepts to understand potential factors influencing professional football players' salaries using a dataset from the 2023-24 season. At this stage, we introduce these concepts with a tentative approach, providing an outline of how they might apply to the data.
+
+**Conceptual Framework**: One possible framework involves hypothesizing that players' salaries could be influenced by factors such as age, reputation, international appearances, and EU nationality. This conceptual framework might guide later analysis and the formulation of specific hypotheses.
+
+**Variables**: In this exploratory context, Salary could serve as the dependent variable, or primary outcome of interest, while variables like Reputation, Age, Caps (international appearances), and EU Nationality may be considered as independent variables that potentially impact salary.
+
+**Descriptive Statistics**: Descriptive statistics, including measures such as mean, median, and standard deviation, could be used to summarize the central tendencies and variability in the dataset. For instance, these metrics might help us understand typical salary ranges or reputation scores among players.
+
+**Inferential Statistics**: To determine if patterns observed in the sample may extend to a broader population, we may apply inferential statistics. For example, a t-test could be conducted later to explore possible differences in salary between EU and non-EU players, providing insights that might indicate broader trends.
+
+**Statistical Significance**: Statistical significance will allow us to interpret whether the relationships observed in the sample data are likely to reflect real effects in the population or could be due to chance. A result may be considered statistically significant if the p-value falls below a set threshold (e.g., p \< 0.05), indicating that further analysis could reveal meaningful insights.
+
+These foundational concepts provide a preliminary basis for structuring the analysis, and as we proceed, they may guide the decisions made in defining and testing relationships within the dataset.
+
+### 2. Setup and Installation
+
+```{r, echo=FALSE, results='hide', warning=FALSE, message=FALSE}
+options(repos = c(CRAN = "https://cran.rstudio.com"))
+```
+
+```{r, echo=FALSE, results='hide', warning=FALSE, message=FALSE}
+# First we create a function called install_packages, it takes as argument a vector 
+install_packages <- function(pkg) { 
+  if (!(pkg %in% installed.packages()[, "Package"])) { 
+    install.packages(pkg, repos='http://cran.us.r-project.org')
+  }
+  library(pkg, character.only = TRUE)
+}
+
+# Create the list of packages we need
+pkg_list = c("tidyverse", "modelr", "carData", "car", "gtsummary", "flextable", "ivo.table")
+# Call our function passing it the list of packages
+lapply(pkg_list, install_packages)
+```
+
+```{r, echo=FALSE, results='hide', warning=FALSE, message=FALSE}
+# Load necessary libraries for missing data visualization and other visualizations
+pkg_list = c("VIM", "naniar", "moments", "gt", "kableExtra", "plotly", "viridis")
+# Install and load each package in the list
+lapply(pkg_list, install_packages)
+```
+
+```{r, echo=FALSE, results='hide', warning=FALSE, message=FALSE}
+# Set global options for the RMarkdown document
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+
+# Set the working directory to the location of the RMarkdown file
+setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
+```
+
+### 3. Read datasets
+
+This section ensures the dataset is correctly loaded and formatted in R for further analysis. We load the cleaned dataset, wages_cleaned.csv, which has been preprocessed for data consistency.
+
+#### 3.1 Main dataset: wages_cleaned
+
+```{r, echo=FALSE, results='hide', warning=FALSE, message=FALSE}
+# Read in the dataset
+wages_cleaned <- read.csv("wages_cleaned.csv")
+```
+
+```{r, echo=FALSE, results='hide', warning=FALSE, message=FALSE}
+# Check the structure of the dataset
+str(wages_cleaned)
+```
+
+```{r, warning=FALSE, message=FALSE}
+colnames(wages_cleaned)
+```
+
+#### 3.2 Additional Dataset: raw_wages
+
+```{r, echo=FALSE, results='hide', warning=FALSE, message=FALSE}
+# Read in the additional dataset
+raw_wages <- read.csv("raw_wages.csv")
+```
+
+```{r, echo=FALSE, results='hide', warning=FALSE, message=FALSE}
+# Check the structure of the dataset
+str(raw_wages)
+```
+
+```{r, warning=FALSE, message=FALSE}
+# Check the column names of the raw_wages dataset
+colnames(raw_wages)
+```
+
+Inconsistent Data Formats:
+
+-   The Salary column in raw_wages needs to be cleaned to remove the currency symbol and any trailing characters. It also needs to be converted to numeric.
+
+-   The CR column in raw_wages needs to be cleaned to remove whitespace and the comma to match with Reputation.
+
+```{r, echo=FALSE, results='hide', warning=FALSE, message=FALSE}
+# Clean Salary in raw_wages
+# Assuming there might be spaces and currency symbols, replace those and convert to numeric
+raw_wages$Salary <- as.numeric(gsub("[^0-9]", "", as.character(raw_wages$Salary)))
+
+# Clean CR (Reputation) in raw_wages
+# This will also handle commas, spaces, etc.
+raw_wages$CR <- as.numeric(gsub("[^0-9]", "", as.character(raw_wages$CR)))
+
+# Convert `AT.Apps` in `raw_wages` to integer
+raw_wages <- raw_wages %>%
+  mutate(AT.Apps = as.integer(AT.Apps))
+
+# Display the cleaned columns in raw_wages
+head(raw_wages[, c("Salary", "Age", "CR", "AT.Apps")])
+```
+
+#### 3.3 Merging nominal variables to the main dataset
+
+```{r, warning=FALSE, message=FALSE}
+# Perform the inner join to add Begins and Based columns
+data <- wages_cleaned %>%
+  inner_join(raw_wages %>%
+               select(Begins, Based, Salary, Age, CR, AT.Apps), 
+             by = c("Salary" = "Salary", 
+                    "Age" = "Age", 
+                    "Apps" = "AT.Apps",
+                    "Reputation" = "CR"))
+
+# Check the first few rows of the merged dataset to verify the merge
+head(data)
+```
+
+#### 3.4. Duplicated rows
+
+```{r, echo=FALSE, results='hide', warning=FALSE, message=FALSE}
+# Check for duplicates in the merged dataset (data)
+duplicates_data <- data[duplicated(data), ]
+
+# Count the number of duplicated rows in the merged dataset
+num_duplicates_data <- sum(duplicated(data))
+
+# Print the number of duplicates
+print(paste("Number of duplicated rows in the merged dataset:", num_duplicates_data))
+
+# View the duplicated rows
+head(duplicates_data)
+```
+
+In this analysis, we decided to retain duplicate rows for the following reasons:
+
+-   Real-World Representation: duplicates may reflect valid repeated measures or observations, such as multiple records for the same player across different seasons or teams, which are common in sports data.
+
+-   Statistical Power: keeping duplicates increases the sample size, enhancing the reliability and power of probabilistic tests by reducing variance in estimates.
+
+-   Preserving Information: duplicates may carry meaningful information, especially for repeated measures or longitudinal data, which can help capture trends over time.
+
+-   No Data Integrity Issues: the duplicates do not appear to result from errors but represent legitimate observations, so removing them would distort the dataset.
+
+#### 3.5 Adjusting the Is_top_5_League Variable
+
+```{r, echo=FALSE, results='hide', warning=FALSE, message=FALSE}
+# Print unique values of 'Based' where 'Is_top_5_League' is 1
+unique_based_values <- data %>%
+  filter(Is_top_5_League == 1) %>%
+  pull(Based) %>%
+  unique()
+
+# Display the unique values
+print(unique_based_values)
+```
+
+```{r, echo=FALSE, results='hide', warning=FALSE, message=FALSE}
+# Custom function to standardize 'Based'
+standardize_based <- function(based) {
+  based <- str_trim(based)  # Remove extra spaces
+  based <- str_replace_all(based, "\\s+", " ")  # Normalize spaces
+  based <- str_to_title(based)  # Apply title case
+  based <- str_replace_all(based, "Laliga", "LaLiga")  # Correct specific cases
+  return(based)
+}
+
+# Use the function to standardize the Based column
+data <- data %>%
+  mutate(Based = standardize_based(Based))
+
+# Define the top 5 leagues manually
+top_5_based <- c("France (Ligue 1)", 
+                 "Spain (LaLiga)", 
+                 "England (Premier League)", 
+                 "Germany (Bundesliga)", 
+                 "Italy (Serie A)")
+
+# Update the 'Is_top_5_League' column
+data <- data %>%
+  mutate(Is_top_5_League = ifelse(Based %in% top_5_based, 1, 0))
+
+# Verify the changes
+unique_based_values_top_5 <- data %>%
+  filter(Is_top_5_League == 1) %>%
+  pull(Based) %>%
+  unique()
+
+print(unique_based_values_top_5)
+```
+
+### 4. Summary Statistics
+
+In this section, we summarize the main components of the dataset and list the key variables. The dataset contains a snapshot of football player information, including demographic details, reputation, and salary data, up to the 2023-24 season. For this analysis, we primarily use the cleaned dataset (wages_cleaned.csv) rather than the raw dataset to avoid pre-processing errors and ensure data quality.
+
+#### 4.1 Checking missing values
+
+```{r, echo=FALSE, results='hide', warning=FALSE, message=FALSE}
+# Checking for missing values
+colSums(is.na(data))
+```
+
+The output from colSums(is.na(data)) showing zeros for each variable indicates that there are no missing values in any column of the dataset. This is generally reliable for identifying missing data, as it directly counts NA values across all variables. However, to confirm this result and ensure no missing values are overlooked, we can use additional visualization methods for a more visual confirmation.
+
+```{r, echo=FALSE, results='hide', warning=FALSE, message=FALSE}
+# Visualize missing data pattern using VIM
+VIM::aggr(data, combined = FALSE, numbers = TRUE, prop = c(TRUE, FALSE))
+
+# Confirm missing data using naniar's vis_miss()
+naniar::vis_miss(data)
+```
+
+After running colSums(is.na(data)), we observe zero missing values across all columns, indicating no NA entries in the dataset. This finding is further confirmed visually with VIM's aggr() and naniar::vis_miss(), both of which show no missing data patterns. Therefore, we are confident that the dataset is complete, and no further imputation or handling of missing values is necessary.
+
+#### 4.2 Descriptive Statistics
+
+The objective of this section is to summarize the data and visually explore the distribution of key variables. This process helps us understand the data characteristics, including central tendencies, variability, and potential skewness, and allows for initial comparisons across categorical groups.
+
+-   **Continuous Variables** (Salary, Age, Reputation, Caps, Apps):
+    -   If normally distributed, we calculate mean and standard deviation; if skewed, we use median and interquartile range (IQR).
+    -   Visualize these variables with histograms and box plots to explore distributions and detect any skewness or outliers.
+-   **Categorical Variables** (EU National, Is Top 5 League, Based):
+    -   Calculate frequency counts and percentages.
+    -   Visualize with bar charts or pie charts.
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+# Calculate descriptive statistics for continuous variables
+continuous_summary <- data %>%
+  summarise(
+    Salary_mean = mean(Salary, na.rm = TRUE),
+    Salary_median = median(Salary, na.rm = TRUE),
+    Salary_sd = sd(Salary, na.rm = TRUE),
+    Salary_iqr = IQR(Salary, na.rm = TRUE),
+    Salary_min = min(Salary, na.rm = TRUE),
+    Salary_max = max(Salary, na.rm = TRUE),
+    Salary_n = sum(!is.na(Salary)),
+
+    Age_mean = mean(Age, na.rm = TRUE),
+    Age_median = median(Age, na.rm = TRUE),
+    Age_sd = sd(Age, na.rm = TRUE),
+    Age_iqr = IQR(Age, na.rm = TRUE),
+    Age_min = min(Age, na.rm = TRUE),
+    Age_max = max(Age, na.rm = TRUE),
+    Age_n = sum(!is.na(Age)),
+
+    Reputation_mean = mean(Reputation, na.rm = TRUE),
+    Reputation_median = median(Reputation, na.rm = TRUE),
+    Reputation_sd = sd(Reputation, na.rm = TRUE),
+    Reputation_iqr = IQR(Reputation, na.rm = TRUE),
+    Reputation_min = min(Reputation, na.rm = TRUE),
+    Reputation_max = max(Reputation, na.rm = TRUE),
+    Reputation_n = sum(!is.na(Reputation)),
+
+    Caps_mean = mean(Caps, na.rm = TRUE),
+    Caps_median = median(Caps, na.rm = TRUE),
+    Caps_sd = sd(Caps, na.rm = TRUE),
+    Caps_iqr = IQR(Caps, na.rm = TRUE),
+    Caps_min = min(Caps, na.rm = TRUE),
+    Caps_max = max(Caps, na.rm = TRUE),
+    Caps_n = sum(!is.na(Caps)),
+
+    Apps_mean = mean(Apps, na.rm = TRUE),
+    Apps_median = median(Apps, na.rm = TRUE),
+    Apps_sd = sd(Apps, na.rm = TRUE),
+    Apps_iqr = IQR(Apps, na.rm = TRUE),
+    Apps_min = min(Apps, na.rm = TRUE),
+    Apps_max = max(Apps, na.rm = TRUE),
+    Apps_n = sum(!is.na(Apps))
+  ) %>%
+  # Reshape the data to long format
+  pivot_longer(
+    everything(),
+    names_to = c("Variable", ".value"),
+    names_sep = "_"
+  )
+
+# Display the summary table
+print("Continuous Variables Summary:")
+print(continuous_summary)
+```
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+# List of continuous variables of interest
+variables <- c("Salary", "Age", "Reputation", "Caps", "Apps")
+
+# Loop through each variable to create visualizations
+for (var in variables) {
+  
+  # Set appropriate binwidth based on variable range
+  binwidth_value <- if (var == "Salary") 500000 else 1  # Reduced binwidth for better scaling
+  
+  # Dot Plot
+  gg_dot <- ggplot(data, aes_string(x = var)) + 
+    geom_dotplot(binwidth = binwidth_value, fill = "skyblue", stackdir = "centerwhole") +
+    labs(title = paste("Dot Plot for", var), x = var) +
+    theme_minimal() +
+    theme(axis.text.y = element_blank(), axis.ticks.y = element_blank())  # Remove y-axis labels for simplicity
+  print(gg_dot)
+}
+```
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+# Descriptive statistics for categorical variables
+categorical_summary <- data %>%
+  select(EU_National, Is_top_5_League, Based) %>%
+  gtsummary::tbl_summary(
+    by = NULL,  # No grouping variable
+    statistic = all_categorical() ~ "{n} ({p}%)"
+  )
+
+# Display categorical summaries
+#print("Categorical Variables Summary:")
+categorical_summary
+```
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+# Count the number of EU and Non-EU players
+eu_data <- data %>%
+  count(EU_National) %>%
+  mutate(percentage = n / sum(n) * 100)
+
+# Pie chart for EU_National
+ggplot(eu_data, aes(x = "", y = n, fill = as.factor(EU_National))) +
+  geom_bar(stat = "identity", width = 1) +
+  coord_polar("y") +
+  geom_text(aes(label = paste0(round(percentage, 1), "%")),
+            position = position_stack(vjust = 0.5), size = 5) +
+  labs(title = "Distribution of EU vs Non-EU Players", fill = "EU National") +
+  theme_void()
+
+# Count the number of players in Top 5 Leagues vs Non-Top 5 Leagues
+top_league_data <- data %>%
+  count(Is_top_5_League) %>%
+  mutate(percentage = n / sum(n) * 100)
+
+# Pie chart for Is_Top_5_League
+ggplot(top_league_data, aes(x = "", y = n, fill = as.factor(Is_top_5_League))) +
+  geom_bar(stat = "identity", width = 1) +
+  coord_polar("y") +
+  geom_text(aes(label = paste0(round(percentage, 1), "%")),
+            position = position_stack(vjust = 0.5), size = 5) +
+  labs(title = "Distribution of Players in Top 5 vs Non-Top 5 Leagues", fill = "Top 5 League") +
+  theme_void()
+
+# Bar chart for the 'Based' categorical variable
+# ---> not readable.Instead:
+
+# Create a scrollable HTML table with the player distribution
+summary_table <- data %>%
+  count(Based) %>%
+  arrange(desc(n)) %>%
+  kable("html", col.names = c("League/Nation", "Players Count")) %>%
+  kable_styling(full_width = FALSE) %>%
+  scroll_box(width = "100%", height = "400px")
+
+# Display the table in RMarkdown
+summary_table
+```
+
+### 5. Normality assessment
+
+The Objective of this session is to determine if continuous variables are approximately normally distributed, which will influence our choice of statistical tests.
+
+#### 5.1 References
+
+-   *Curran, P. J., West, S. G., & Finch, J. F. (1996). The robustness of test statistics to nonnormality and specification error in confirmatory factor analysis.*: For skewness and kurtosis as indicators of normality, often referenced for thresholds (e.g., skewness \> +/-2 or kurtosis \> +/-7 suggests non-normality).
+
+-   *Field, A., Miles, J., & Field, Z. (2013). Discovering statistics using IBM SPSS statistics. Sage publications.*: For Z-scores and the 99% rule, which states that if 99% of Z-scores lie within +/- 3.29, the data can be treated as approximately normal despite non-ideal skewness or kurtosis.
+
+#### 5.2 Inspect Visuals
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+# Loop through each variable to create a histogram with density curve and QQ plot
+for (var in variables) {
+  
+  # Set appropriate binwidth based on variable range (e.g., larger banwidth for Salary)
+  binwidth_value <- if (var == "Salary") 500000 else 5
+  
+  # Create a histogram with density overlay
+  gg <- ggplot(data, aes_string(x = var)) + 
+    labs(title = paste("Histogram for", var), caption = paste("Figure:", var, "Histogram")) +
+    labs(x = var) +
+    geom_histogram(binwidth = binwidth_value, colour = "black", aes(y = ..density.., fill = ..count..)) +
+    scale_fill_gradient("Count", low = "#DCDCDC", high = "#7C7C7C") +
+    stat_function(fun = dnorm, color = "red", 
+                  args = list(mean = mean(data[[var]], na.rm = TRUE), 
+                              sd = sd(data[[var]], na.rm = TRUE)))
+  
+  # Display the histogram
+  print(gg)
+}
+```
+
+A QQ plot helps assess the normality of a variable. If the data points follow the red line (qqline), it suggests that the distribution is approximately normal. Deviations from this line indicate skewness or kurtosis. For each variable, qqnorm plots the variable’s quantiles against theoretical quantiles of a normal distribution. qqline adds a reference line, making it easier to visually assess the normality of the variable.
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+# This loop generates a QQ (Quantile-Quantile) plot for each variable listed in variables.
+for (var in variables) {
+  # Create a QQ plot
+  qqnorm(data[[var]], main = paste("QQ Plot for", var)) 
+  qqline(data[[var]], col = 2) # Add a line to the plot
+}
+```
+
+#### 5.3 Calculate standardised skew and Kurtosis
+
+Values close to zero indicate normality, and values between -2 and +2 suggest approximate normality.
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+# Calculate skewness and kurtosis for each continuous variable
+for (var in variables) {
+  skew_value <- skewness(data[[var]], na.rm = TRUE)
+  kurtosis_value <- kurtosis(data[[var]], na.rm = TRUE)
+  cat("\n", var, ": Skewness =", skew_value, ", Kurtosis =", kurtosis_value, "\n")
+}
+```
+
+-   **Salary**: the skewness of 59.18 indicates a highly positively skewed distribution, with a long tail extending to the right. The extreme kurtosis of 5059.11 suggests an extremely peaked distribution with a high concentration of values around the mean. This severe deviation from normality means that non-parametric methods should be prioritized for analysis, as parametric assumptions would be violated due to the heavy skew and extreme kurtosis.
+
+-   **Age**: the skewness of 0.21 and kurtosis of 2.36 indicate that Age is relatively close to a normal distribution. The kurtosis is slightly above the threshold of 2, but it is still within an acceptable range for parametric analysis. Therefore, parametric tests could be suitable, as the variable shows only slight deviations from normality.
+
+-   **Reputation**: With a skewness of 0.04 and kurtosis of 3.38, Reputation displays nearly symmetric behavior and is only slightly leptokurtic (above the normal kurtosis value of 3). This suggests that the distribution is reasonably normal, making it appropriate for parametric methods in analysis.
+
+-   **Caps** the skewness of 4.18 and kurtosis of 26.11 reveal a strong positive skew, with a highly peaked distribution. This variable deviates significantly from normality, much like Salary, and would therefore require the use of non-parametric tests for any analysis due to the extreme skewness and high kurtosis.
+
+-   **Apps** : the skewness of 0.88 indicates a mild positive skew, while the kurtosis of 3.24 suggests a slightly peaked distribution. Given that the distribution is relatively close to normal, parametric methods would be appropriate for this variable, as the deviations from normality are minimal.
+
+#### 5.4 Create standardised scores for variable (Z scores)
+
+Z-scores are calculated by subtracting the mean and dividing by the standard deviation for each value in the variable. For large samples(n\<80), theory suggests that approximately 97% of Z-scores should fall within the +/-3.29 range to indicate that the data is approaching normality. However, as parametric tests are robust to moderate violations of normality, we will consider variables with at least 95% of Z-scores within +/-3.29 as sufficiently normal for parametric methods.
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+# Calculate and analyze Z-scores for each variable
+for (var in variables) {
+  # Calculate Z-scores
+  z_scores <- scale(data[[var]], center = TRUE, scale = TRUE)
+  
+  # Calculate the proportion of Z-scores within +/- 3.29
+  within_range <- mean(abs(z_scores) <= 3.29, na.rm = TRUE) * 100
+  
+  cat("\n", var, ": Proportion of Z-scores within +/- 3.29 =", within_range, "%\n")
+}
+```
+
+-   **Salary**: has 99.41% of Z-scores within +/-3.29, far exceeding both the 97% theoretical threshold and the more lenient 95% threshold. However, extreme skewness (59.18) and kurtosis (5059.11) indicate substantial deviations from normality. Despite the high proportion of Z-scores within the range, non-parametric methods might remain more suitable if the transformations (e.g., logarithmic) cannot reduce skewness and kurtosis significantly. However, parametric tests can still be considered given the robustness of these tests to moderate deviations from normality.
+-   **Age**: with 99.97% of Z-scores within the +/-3.29 range, Age is very close to normal. This aligns with the earlier skewness (0.21) and kurtosis (2.36) values, confirming that parametric tests could be justifiable for Age, as the variable shows very little deviation from normality.
+-   **Reputation**: it shows 99.80% of Z-scores within the normal +/-3.29 range, reinforcing the interpretation that it is approximately normally distributed. This supports the earlier skewness (0.04) and kurtosis (3.38) findings, meaning parametric tests can be confidently used with Reputation.
+-   **Caps**: it has 97.77% of Z-scores within +/-3.29, exceeding the theoretical 97% threshold. However, its high skewness (4.18) and kurtosis (26.11) indicate significant deviations from normality. Even though the Z-score proportion meets the threshold, non-parametric methods might be more appropriate unless a transformation (such as square root) is applied to reduce skewness and kurtosis.
+-   **Apps**: with 99.70% of Z-scores within the normal range, Apps shows reasonable adherence to normality. This, along with its mild skewness (0.88) and kurtosis (3.24), suggests that parametric tests are appropriate for analyzing Apps, as the deviations from normality are not severe.
+
+#### 5.5 Assessment report
+
+-   **Salary** and **Caps**: While these variables meet or exceed the 97% threshold for Z-scores within +/-3.29, their extreme skewness and kurtosis suggest significant deviations from normality. Transformations, such as logarithmic (for Salary) or square root (for Caps), could improve normality. Non-parametric methods might remain more suitable for these variables if the transformations do not sufficiently reduce the skewness or kurtosis. However, parametric tests could still be considered given the robustness of these methods.
+-   **Age**, **Reputation** and **Apps**: Approaching normality with both skewness/kurtosis values in acceptable ranges and high Z-score proportions. Parametric tests (e.g., t-tests, Pearson correlation) can be appropriately used.
+
+#### 5.6 Variable transformations
+
+##### 5.6.1 Log transformation of Salary data
+
+The log transformation is applied using log(Salary). This transformation is commonly used to deal with highly skewed data, as it compresses extreme values and often brings the distribution closer to normal. The original data exhibited extreme skewness (59.18) and kurtosis (5059.11), indicating that it had a long right tail with many extreme values. The log transformation is particularly effective in compressing the right tail of a distribution and reducing extreme values. It can help normalize distributions that have exponential growth or are heavily skewed (such as income or salary data). The transformation converts the salary values to a more manageable scale and helps make the data more normally distributed.
+
+```{r, warning=FALSE, message=FALSE}
+# Apply the log transformation (natural logarithm)
+data$log_salary <- log(data$Salary)
+
+# examine the summary statistics to see if the transformation improved the distribution.
+summary(data$log_salary)  # Get summary statistics for the transformed Salary data
+```
+
+These values indicate that the transformed Salary variable now has a more centered distribution with reduced extreme values.
+
+We will recalculate skewness and kurtosis and the Z-scores for the transformed data and check how many fall within this range.
+
+```{r, warning=FALSE, message=FALSE}
+# Calculate skewness and kurtosis for the log-transformed Salary data
+skewness_log_salary <- skewness(data$log_salary)
+kurtosis_log_salary <- kurtosis(data$log_salary)
+
+# Print the results for skewness and kurtosis
+cat("Skewness of transformed Salary:", skewness_log_salary, "\n")
+cat("Kurtosis of transformed Salary:", kurtosis_log_salary, "\n")
+
+# Calculate Z-scores for the log-transformed Salary data
+z_scores_log_salary <- (data$log_salary - mean(data$log_salary)) / sd(data$log_salary)
+
+# Calculate the proportion of Z-scores within +/- 3.29
+proportion_within_3_29 <- sum(abs(z_scores_log_salary) <= 3.29) / length(z_scores_log_salary) * 100
+
+# Output the proportion of Z-scores within ±3.29 for the log-transformed Salary data
+cat("Proportion of Z-scores within +/- 3.29 for transformed Salary:", proportion_within_3_29, "%\n")
+```
+
+For the **Salary** variable a logarithmic transformation was applied, significantly reducing the skewness and kurtosis, and resulting in a transformed variable with a skewness of 0.303 and kurtosis of 3.31. Furthermore, after transformation, 99.90% of Z-scores fell within ±3.29, which far exceeds the 95% threshold typically used for justifying parametric tests. Based on this improvement in normality, parametric methods can now be considered more appropriate, given the robustness of these tests to moderate deviations from normality.
+
+##### 5.6.3 Square root transformation of Caps data
+
+A square root transformation will be applied to the Caps variable to reduce the high skewness and kurtosis. The square root transformation is often applied to data that is moderately skewed or has count data with a positive skew. The Caps data had a relatively high skewness (4.18) and kurtosis (26.11), which indicated a positive skew, but not as extreme as the Salary variable. After applying the transformation, we recalculate the Z-scores for the transformed variable and evaluate the proportion of Z-scores within ±3.29 to assess how well the transformation has normalized the data.
+
+```{r, warning=FALSE, message=FALSE}
+# Apply a transformation (e.g., square root) to Caps
+sqrt_caps <- sqrt(data$Caps)
+
+# Recalculate skewness and kurtosis for transformed Caps
+skewness_transformed <- skewness(sqrt_caps)
+kurtosis_transformed <- kurtosis(sqrt_caps)
+
+# Round skewness and kurtosis to 2 decimal places for readability
+skewness_transformed <- round(skewness_transformed, 3)
+kurtosis_transformed <- round(kurtosis_transformed, 3)
+
+# Output skewness and kurtosis for transformed Caps
+cat("Skewness of transformed Caps: ", skewness_transformed, "\n")
+cat("Kurtosis of transformed Caps: ", kurtosis_transformed, "\n")
+
+# Recalculate Z-scores after transformation
+z_scores_sqrt_caps <- scale(sqrt_caps)
+proportion_z_scores_within_3_29_transformed <- mean(abs(z_scores_sqrt_caps) <= 3.29) * 100
+proportion_z_scores_within_3_29_transformed <- round(proportion_z_scores_within_3_29_transformed, 3)
+cat("Z-scores of transformed Caps:", proportion_z_scores_within_3_29_transformed)
+```
+
+For the **Caps** variable, a square root transformation was applied, significantly reducing the skewness and kurtosis. The transformed variable now has a skewness of 2.082 and kurtosis of 7.346. Additionally, after the transformation, 98.40% of Z-scores fell within ±3.29, which exceeds the 95% threshold typically used for justifying parametric tests. Based on this improvement in normality, parametric methods can now be considered more appropriate, given the robustness of these tests to moderate deviations from normality.
+
+#### 5.7 Statements:
+
+**Salary** scores were assessed for normality. Visual inspection of the histogram and QQ plot revealed a right-tailed and highly peaked distribution, indicating a significant deviation from normality. The skewness (59.18) and kurtosis (5059.11) were far beyond the acceptable thresholds (Curran, West, and Finch, 1996). Despite these extreme values, 99.41% of Z-scores fell within +/-3.29, surpassing both the 97% theoretical threshold and the more lenient 95% threshold used to justify the robustness of parametric tests.
+
+Given the extreme skewness and kurtosis, non-parametric methods were initially considered more appropriate. However, after applying a logarithmic transformation to the Salary variable, the skewness was reduced to 0.303 and the kurtosis to 3.31, which are within acceptable limits for parametric tests. Additionally, 99.90% of Z-scores for the transformed data now fall within +/-3.29, further supporting the use of parametric methods. Despite the initial issues with normality, parametric tests can now be appropriately used, considering the robustness of these tests to moderate deviations from normality (mean = 362,275, sd = 2,147,614, n = 35,478).
+
+**Age** scores were assessed for normality. Visual inspection of the histogram and QQ plot showed a distribution close to normal, with only a slight positive skew. Skewness (0.21) and kurtosis (2.36) fall within acceptable ranges, according to Curran, West, and Finch's (1996) guidelines. Additionally, 99.97% of Z-scores lie within +/-3.29, meeting Field, Miles, and Field’s (2013) recommendation. Thus, Age may be considered approximately normal for most parametric tests (mean = 26.26, sd = 4.84, n = 35,478).
+
+**Reputation** scores were assessed for normality. Visual inspection of the histogram and QQ plot revealed that Reputation scores exhibit a relatively normal distribution, with a skewness of 0.04 and kurtosis of 3.38, both within acceptable ranges (Curran, West, and Finch, 1996). Furthermore, 99.80% of Z-scores fall within +/-3.29, as per Field, Miles, and Field’s (2013) guidance. Therefore, Reputation can be considered approximately normal (mean = 4,789, sd = 1,089, n = 35,478)
+
+**Caps** scores were also assessed for normality. Visual inspection of the histogram and QQ plot revealed a positively skewed distribution with high kurtosis, indicating a departure from normality. The skewness (4.18) and kurtosis (26.11) far exceed the acceptable limits suggested by Curran, West, and Finch (1996). These extreme values indicated that Caps was not normally distributed, and the Z-scores showed that only 97.77% of the Z-scores fell within +/-3.29, which is above the theoretical 95% threshold but still below the ideal 97% threshold.
+
+Given the substantial skewness and kurtosis, non-parametric methods were initially recommended. However, after applying a square root transformation to Caps, the skewness was reduced to 2.082, and the kurtosis was brought closer to acceptable levels (7.346). The transformed variable now showed 98.40% of Z-scores falling within +/-3.29, which is well beyond the 95% threshold typically used for parametric tests.
+
+As a result, parametric methods can now be considered appropriate for analyzing Caps scores after the transformation (mean = 5.91, sd = 14.49, n = 35,478).
+
+**Apps** scores were evaluated for normality. Visual inspection of the histogram and QQ plot indicated moderate positive skewness. The skewness (0.88) and kurtosis (3.24) values are within ranges that suggest slight deviations from normality, yet are within permissible levels for large sample sizes. The Z-score analysis shows that a high proportion of values lie within +/-3.29, though extreme values may impact normality. Apps shows some deviation but may be treated as approximately normal under certain conditions (mean = 145.31, sd = 124.42, n = 35,478).
+
+### 6. Hypotheses
+
+-   **Variables of Interest**:
+
+    -   *Reputation*
+    -   *Age*
+    -   *International appearances (Caps)*
+    -   *Last transfer Fee category*
+    -   *Club appearances (Apps)*
+    -   *Nationality (EU vs Non-EU)*
+    -   *Top 5 League Status*
+    -   *Annual Salary*
+    -   *League(Based)*
+
+-   **Population**: *Professional football players in the 2023-24 season.*
+
+#### 6.1. Identify a research question
+
+**Relationship-Based Question for this Dataset**: *What is the relationship between players' reputation, age, career appearances (both international and club), transfer fee category, and league status on their annual salary in professional football?*
+
+#### 6.2. Derive 5 testable hypotheses
+
+Based on the research questions, the following hypotheses can be derived:
+
+1.  **H1**:
+
+-   Null Hypothesis (H0): There is no correlation between players' current **reputation** and their annual **salary**.
+-   Alternative Hypothesis (Ha): There is a correlation between players' current **reputation** and their annual **salary**.
+-   Variables: Current Reputation (Interval/Ratio), Transformed Salary (Interval/Ratio)
+
+2.  **H2**:
+
+-   Null Hypothesis (H0): There is no relationship between **age** and **salary**.
+-   Alternative Hypothesis (Ha): There is a relationship between **age** and **salary**.
+-   **Variables**: Age (Interval/Ratio), Transformed Salary (Interval/Ratio)
+
+3.  **H3**:
+
+-   Null Hypothesis (H0): There is no association between **EU nationality** and the **league/nation (Based)** where the club is located.
+-   Alternative Hypothesis (Ha): There is an association between **EU nationality** and the **league/nation (Based)** where the club is located.
+-   **Variables**: EU National (Binary Nominal), Based (Nominal with multiple categories)
+
+4.  **H4**:
+
+-   Null Hypothesis (H0): There is no correlation between **salary** and the **league/nation (Based)** where the club is located.
+-   Alternative Hypothesis (Ha): There is a correlation between **salary** and the **league/nation (Based)** where the club is located.
+-   **Variables**: Transformed Salary (Continuous), Based (Nominal with multiple categories))
+
+5.  **H5**:
+
+-   Null Hypothesis (H0): There is no difference in average **salary** between players in **Top 5 leagues** and those in non_Top 5 leagues.
+-   Alternative Hypothesis (Ha): There is a difference in average **salary** between players in **Top 5 leagues** and those in non_Top 5 leagues.
+-   **Variables**: Is_Top_5_League (Binary Nominal), Transformed Salary (Interval/Ratio)
+
+### 7.Hypothesis Testing and Visualizations
+
+This section presents the hypothesis testing results for each hypothesis, including appropriate statistical tests, interpretation of findings, and visualizations where applicable. Scatter plots are shown when assessing correlations between two continuous variables, such as Reputation and Salary. For hypotheses involving continuous and categorical variables, box plots are used to visually compare distributions. These visualizations help to interpret relationships and provide insights into data trends.
+
+#### 7.1 Hypothesis 1: Relationship between Reputation and Salary
+
+-   H0: There is no correlation between players' current reputation and their annual salary.
+
+-   Ha: There is a correlation between players' current reputation and their annual salary.
+
+-   Variables: Reputation (Continuous, Approaching Normal), Transformed Salary (Continuous, Normal)
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+# Scatter plot with regression line for Transformed Salary vs. Reputation
+ggplot(data, aes(x = Reputation, y = log_salary)) +  # log_salary is the transformed Salary variable
+  geom_point(color = "blue") +
+  geom_smooth(method = "lm", color = "red", se = FALSE) +
+  labs(title = "Scatter Plot of Transformed Salary vs. Reputation",
+       x = "Reputation",
+       y = "Transformed Salary")
+```
+
+Pearson's product-moment correlation was chosen to test the relationship between Reputation and Transformed Salary (log_salary) because both variables are continuous, and the transformed Salary variable now follows a normal distribution, as demonstrated by the previous analysis. Pearson's correlation measures the strength and direction of the linear relationship between two continuous variables, and it assumes that both variables are normally distributed (or approximately so). Given that both variables meet these assumptions, this test is the most appropriate method for assessing their correlation.
+
+```{r, warning=FALSE, message=FALSE}
+# Pearson correlation test for Reputation and Transformed Salary
+cor.test(data$Reputation, data$log_salary, method = "pearson")
+```
+
+The result from the Pearson's correlation test indicates a very strong positive correlation between Reputation and Transformed Salary (log_salary), with a correlation coefficient of 0.845. This suggests that as players' reputation increases, their salary tends to increase as well. The t-value of 297.31 with 35476 degrees of freedom indicates a very significant relationship, and the p-value is reported as \< 2.2e-16, which is effectively zero. This extremely small p-value is much lower than the commonly used significance level of 0.05, indicating that the null hypothesis of no correlation can be rejected.
+
+The 95% confidence interval for the correlation is between 0.842 and 0.848, suggesting that we can be 95% confident that the true correlation lies within this range.
+
+#### 7.2 Hypothesis 2: Relationship between Age and Salary
+
+-   H0: There is no correlation between players' current age and their annual salary.
+
+-   Ha: There is a correlation between players' current age and their annual salary.
+
+-   Variables: Reputation (Continuous), Transformed Salary (Continuous)
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+# Scatter plot for Salary vs. Age
+ggplot(data, aes(x = Age, y = log_salary)) +
+  geom_point(color = "blue") +
+  geom_smooth(method = "lm", color = "red", se = FALSE) +
+  labs(title = "Scatter Plot of Salary vs. Age", x = "Age", y = "Salary")
+```
+
+Since both variables are continuous and Salary is non-normal, we use Spearman correlation to test for correlation.
+
+```{r, warning=FALSE, message=FALSE}
+# Pearson correlation test for Reputation and Transformed Salary
+cor.test(data$Age, data$log_salary, method = "pearson")
+```
+
+The Pearson correlation test reveals a weak positive correlation between players' Age and their transformed Salary (log_salary), with a correlation coefficient of 0.091. This suggests that while there is a slight tendency for players with higher Age to have higher salaries, the relationship is not strong.
+
+The test statistic (t = 17.29) and the extremely small p-value (\< 2.2e-16) provide strong evidence to reject the null hypothesis (H0) of no correlation. The 95% confidence interval for the correlation coefficient is between 0.081 and 0.102, indicating that we are 95% confident the true correlation lies within this range.
+
+#### 7.3 Hypothesis 3: Association between EU Nationality and League/Nation (Based)
+
+-   H0: There is no association between EU nationality and the league/nation (Based) where the club is located.
+
+-   Ha: There is an association between EU nationality and the league/nation (Based) where the club is located.
+
+-   Variables EU National (Binary Nominal), Based (Nominal with multiple categories)
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+# Create summary table for EU_National and Based
+summary_table <- data %>%
+  group_by(Based) %>%
+  summarise(
+    `EU National: YES` = sum(EU_National == 1, na.rm = TRUE),
+    `EU National: NO` = sum(EU_National == 0, na.rm = TRUE),
+    .groups = 'drop'
+  )
+
+# Create a formatted table using gt
+gt_table <- summary_table %>%
+  gt() %>%
+  tab_header(title = "Distribution of EU Nationality by League/Nation") %>%
+  cols_label(Based = "League/Nation") %>%
+  fmt_number(columns = everything(), decimals = 0) %>%
+  tab_style(
+    style = list(
+      cell_borders(sides = c("top", "bottom"), color = "black", weight = px(2))
+    ),
+    locations = cells_body(columns = everything())
+  ) %>%
+  tab_options(
+    table.border.top.color = "black",
+    table.border.bottom.color = "black",
+    table.border.bottom.width = px(2),
+    table.border.top.width = px(2),
+    column_labels.border.top.color = "black",
+    column_labels.border.bottom.color = "black",
+    column_labels.border.bottom.width = px(2)
+  )
+
+# Display the formatted table
+gt_table
+```
+
+To assess the association between EU Nationality (Binary) and League/Nation (Nominal with multiple categories), we need to choose an appropriate statistical test. Given that both variables are categorical, we initially considered the Chi-Square Test of Independence, which is commonly used to evaluate relationships between categorical variables.
+
+The Chi-Square Test assumes that all expected counts in the contingency table are 5 or greater. If this assumption is violated, the test may not be reliable. In cases where any expected count is less than 5, we should instead use Fisher's Exact Test, which is more accurate when dealing with small sample sizes or when the contingency table has cells with low expected counts.
+
+We performed the Chi-Square test and checked the expected counts for each cell in the contingency table. If any of the expected counts are below 5, Fisher’s Exact Test would be recommended, as it is more suitable for small sample sizes or low frequencies in categorical data.
+
+Based on the results of the Chi-Square test and verification of expected counts, we determined whether the Chi-Square test or Fisher's Exact Test is appropriate for analyzing the association between EU Nationality and League/Nation.
+
+```{r, echo=FALSE, results='hide', warning=FALSE, message=FALSE}
+# Install gmodels package (only need to do this once)
+#install.packages("gmodels")
+
+# For very large contingency tables, qw can try the coin package, which provides an alternative implementation of Fisher's Exact Test that may be more efficient.
+#install.packages("coin")
+
+library(gmodels)   # Load the gmodels package
+library(coin)   # Load the coin package
+
+```
+
+```{r, warning=FALSE, message=FALSE}
+# Create the contingency table (adjust 'data$EU_National' and 'data$Based' to your variables)
+contingency_table <- table(data$EU_National, data$Based)
+
+# Perform the Chi-Square Test and Fisher's Exact Test
+#crosstable_result <- Crosstable(contingency_table, fisher = TRUE, chisq = TRUE)
+
+# Error in Crosstable(contingency_table, fisher = TRUE, chisq = TRUE) : 
+#  could not find function "Crosstable"
+
+# Perform Chi-Square Test
+chi_square_result <- chisq.test(contingency_table)
+
+# Check if any expected counts are less than 5
+if (any(chi_square_result$expected < 5)) {
+  print("Fisher's Exact Test is recommended due to low expected counts.")
+} else {
+  print("Chi-Square Test is appropriate.")
+}
+```
+
+```{r, warning=FALSE, message=FALSE}
+# Perform Fisher's Exact Test (if expected count is below 5)
+#fisher_test_result <- fisher.test(contingency_table)
+
+# Perform Fisher's Exact Test using the coin package
+fisher_test_result <- fisher.test(contingency_table, simulate.p.value = TRUE, B = 10000)
+
+# Print result
+print(fisher_test_result)
+```
+
+The Fisher's Exact Test was conducted to assess the association between EU Nationality (binary variable: Yes/No) and League/Nation Based (nominal variable with multiple categories). The test resulted in a p-value of 9.999e-05, indicating a significant association between the two variables.
+
+This extremely small p-value suggests that the observed distribution of EU nationality across the different leagues/nations is highly unlikely to have occurred by chance. Therefore, we reject the null hypothesis (H0), which stated that there is no association between EU nationality and the league/nation where the club is based. Instead, the alternative hypothesis (Ha) is supported, meaning there is a significant association between the two variables.
+
+Given the p-value of 9.999e-05 (which is effectively 0.0001), the result is highly statistically significant. This means that the probability of observing such an association (or something more extreme) under the assumption of no association (the null hypothesis) is extremely low. Thus, we can confidently conclude that EU nationality and the league/nation based are not independent — they are associated.
+
+#### 7.4 Hypothesis 4: Relationship between Salary and League/Nation (Based)
+
+-   H0: There is no correlation between salary and the league/nation (Based) where the club is located.
+
+-   Ha: There is a correlation between salary and the league/nation (Based) where the club is located.
+
+-   Variables: Transformed Salary (Continuous), Based (Nominal with multiple categories)
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.width=10, fig.height=6}
+# Box plot for Salary by Based
+ggplot(data, aes(x = factor(Based), y = log_salary)) +
+  geom_boxplot(fill = "lightblue") +
+  labs(title = "Salary Distribution by League/Nation (Based)", x = "League/Nation", y = "Salary") +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1, size = 10)
+  )
+```
+
+#### 7.4.1 Adjusting Categories of League/Nation (Based) for Analysis
+
+When examining the hypothesis about the relationship between salary and the league/nation (Based), two potential approaches were considered:
+
+1.  **Keep the Original Hypothesis and Reduce Categories**: The original hypothesis includes all categories of the League/Nation (Based) variable. However, due to the high number of categories, directly analyzing all groups poses challenges such as sparsity in data for some categories and interpretational complexity. To address this, the categories were reduced by focusing on the top 15 leagues/nations with the highest average salary and including the Is_top_5_League group. This preprocessing step ensured a more manageable analysis without discarding any data rows or fundamentally altering the hypothesis. The hypothesis remained:
+
+"H0: There is no correlation between salary and the league/nation (Based) where the club is located."
+
+2.  **Change the Hypothesis**: Alternatively, the hypothesis could be refined to focus explicitly on the reduced dataset, such as:
+
+"H0: There is no correlation between salary and the top 15 leagues/nations by average salary and top 5 leagues."
+
+While this approach would simplify the analysis further, it would diverge from the other hypotheses in the project, all of which use the entire dataset. It would also exclude the possibility of evaluating relationships involving lower-ranked leagues/nations.
+
+**Preferred Option**: The first option was chosen to maintain consistency across the project by using the full dataset while addressing practical concerns through preprocessing. The decision to reduce categories was motivated by the need for meaningful insights while preserving the integrity of the original hypothesis.
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+# Define a set of colors to cycle through to make it more readable
+repeating_colors <- c("#66c2a5", "#fc8d62", "#8da0cb")  # Three colors, repeated
+
+# Identify the top 10 leagues/nations by average salary
+top_15_based <- data %>%
+  group_by(Based) %>%
+  summarise(avg_salary = mean(log_salary, na.rm = TRUE)) %>%
+  arrange(desc(avg_salary)) %>%
+  slice(1:15) %>%
+  pull(Based)
+
+# Filter data to include only top 10 based leagues and the `Is_top_5_League = 1` group
+filtered_data <- data %>%
+  filter(Based %in% top_15_based | Is_top_5_League == 1)
+
+# Create a box plot with cyclic colors
+p <- ggplot(filtered_data, aes(x = factor(Based), y = log_salary, fill = factor(Based))) +
+  geom_boxplot() +
+  labs(title = "Salary Distribution by Selected League/Nation (Based)", x = "League/Nation", y = "Salary") +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 10, size = 10, color = rep(repeating_colors, length.out = length(unique(filtered_data$Based)))),  # Set repeating colors for x-axis labels
+    legend.position = "none"  # Hide legend if not needed
+  ) +
+  scale_fill_manual(values = rep(repeating_colors, length.out = length(unique(filtered_data$Based))))  # Repeating fill colors
+
+# Convert to interactive plotly plot for better readability
+ggplotly(p, width = 1000, height = 600)
+```
+
+Although Kruskal-Wallis is a non-parametric test for \>2 groups, it does not leverage the assumption of normality. Since the data satisfies normality after transformation, One-Way ANOVA provides greater statistical power and is the preferred choice.
+
+##### Step 1: Pre-Test for Homogeneity of Variances
+
+```{r, warning=FALSE, message=FALSE}
+# Bartlett's test for homogeneity of variances
+#bartlett_result <- stats::bartlett.test(log_salary ~ Based, data = filtered_data)
+#print(bartlett_result)
+# --->  Error in bartlett.test.default(x = mf[[1L]], g = mf[[2L]]) : there must be at least 2 observations in each group
+# ----> # Filter to ensure groups have at least 2 observations
+filtered_data <- filtered_data %>%
+  group_by(Based) %>%
+  filter(n() >= 2) %>%
+  ungroup()
+
+# Bartlett's test for homogeneity of variances
+bartlett_result <- stats::bartlett.test(log_salary ~ Based, data = filtered_data)
+print(bartlett_result)
+
+# Levene's test (alternative, more robust)
+library(car)
+levene_result <- car::leveneTest(log_salary ~ Based, data = filtered_data)
+print(levene_result)
+```
+
+We tested the assumption of homogeneity of variances (i.e., equal variances across the different league/nation groups) using Bartlett's Test and Levene's Test. These tests help us assess whether the variances across the groups are significantly different, which is an important assumption for performing One-Way ANOVA.
+
+The Bartlett's K-squared statistic is 657.55 with a p-value \< 2.2e-16. Since the p-value is extremely small (less than 0.05), we reject the null hypothesis that the variances across the groups are equal. This indicates that the assumption of equal variances is violated. Bartlett’s test is sensitive to departures from normality, which may be the cause of the significant result.
+
+The Levene's test result shows an F-value of 23.424 with a p-value \< 2.2e-16. Like Bartlett’s test, Levene’s test also provides strong evidence that the variances across the groups are unequal. Since Levene’s test is more robust to violations of normality, it is generally preferred when normality is in question. The significant result further supports the conclusion that the assumption of equal variances is violated.
+
+##### Step 2: Perform ANOVA Based on Variance Test
+
+In this step of the analysis we perform Welch’s ANOVA, which will allow us to assess whether there are significant differences in salary means across the selected leagues/nations despite the violation of the homogeneity of variances assumption.
+
+```{r, warning=FALSE, message=FALSE}
+# Standard One-Way ANOVA (if variances are equal)
+anova_result <- stats::aov(log_salary ~ Based, data = filtered_data)
+summary(anova_result)
+
+# Welch’s ANOVA (if variances are unequal)
+welch_result <- stats::oneway.test(log_salary ~ Based, data = filtered_data, var.equal = FALSE)
+print(welch_result)
+```
+
+A Welch's ANOVA was conducted to assess whether there are statistically significant differences in log-transformed salaries (log_salary) across the 15 categories of the Based variable. Welch's ANOVA was chosen as it does not assume equal variances between groups. The analysis revealed a highly significant effect of the Based variable on log_salary, F(14, 125.03) = 30.161, p \< 2.2e-16.
+
+This result indicates that the mean log-transformed salaries differ across at least some of the categories of Based. However, Welch's ANOVA does not specify which pairs of categories are significantly different.
+
+##### Step 3: Post-Hoc Tests
+
+To determine which specific categories of Based differ significantly in their mean log_salary, post-hoc tests are necessary. Since Welch's ANOVA suggests unequal variances among groups, the Games-Howell post-hoc test is the most appropriate choice. This test is robust to heteroscedasticity and unequal group sizes and will allow for pairwise comparisons to identify significant differences between categories.
+
+```{r, warning=FALSE, message=FALSE}
+# install.packages("rstatix")
+library(rstatix)
+
+# Perform Games-Howell post-hoc test for pairwise comparisons
+games_howell_result <- filtered_data %>%
+  dunn_test(log_salary ~ Based, p.adjust.method = "bonferroni")
+
+# Print the results
+print(games_howell_result,100)
+```
+
+```{r}
+summary_stats_pair4 <- filtered_data %>%
+  group_by(Based) %>%
+  summarise(
+    Mean_Log_Salary = mean(log_salary, na.rm = TRUE),
+    SD_Log_Salary = sd(log_salary, na.rm = TRUE),
+    .groups = "drop"
+)
+# Print all rows in the console
+#print(summary_stats_pair4, n = Inf)
+
+# Display the full table in Markdown
+kable(summary_stats_pair4, format = "markdown", col.names = c("League/Nation", "Mean (Log Salary)", "SD (Log Salary)"))
+```
+
+The analysis focused on comparing player salary data across various league pairings. The test statistic results (p-values) provide insights into whether there are significant salary differences between leagues. Leagues with asterisks next to their p-values indicate statistically significant differences in salaries between the two leagues. The number of stars corresponds to the strength of this significance. Leagues marked as "ns" (not significant) show no evidence of salary differences at a reasonable confidence level.
+
+**Observations**:
+
+-   Many pairings like Russia vs. Saudi Arabia (RPL vs. Saudi Pro League) or MLS vs. Ligue 1 show no significant difference in salaries, implying that these leagues may offer similar compensation to their players.
+
+-   Leagues like Premier League vs. Serie A or Bundesliga vs. Serie A show a significant salary gap, suggesting a clear disparity in compensation across European football.
+
+-   Leagues like Brazil’s Série A and Saudi Pro League show huge gaps, which may reflect growing financial investments in the Saudi league.
+
+#### 7.5 Difference in Salary between Top 5 Leagues and Non-Top 5 Leagues
+
+-   H0: There is no difference in average salary between players in Top 5 leagues and those in non-Top 5 leagues.
+
+-   Ha: There is a difference in average salary between players in Top 5 leagues and those in non-Top 5 leagues.
+
+-   Variables: Is_Top_5_League (Binary Nominal), Salary (Continuous)
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+# Box plot for Salary by Is_Top_5_League
+ggplot(data, aes(x = factor(Is_top_5_League), y = log_salary)) +
+  geom_boxplot(fill = "lightgreen") +
+  labs(title = "Salary Distribution by Top 5 League Status", x = "Top 5 League (Yes = 1, No = 0)", y = "Salary") +
+  theme_minimal()
+```
+
+Since the goal is to compare the mean salaries between two independent groups (Top 5 leagues vs. non-Top 5 leagues), the appropriate test to use is a t-test for independent samples.
+
+```{r, warning=FALSE, message=FALSE}
+# Convert the variable Is_top_5_League to a factor 
+data$Is_top_5_League <- as.factor(data$Is_top_5_League)
+
+# Subset the data based on Is_top_5_League factor levels
+top_5_leagues <- data$log_salary[data$Is_top_5_League == "1"]
+non_top_5_leagues <- data$log_salary[data$Is_top_5_League == "0"]
+
+# Perform Levene's Test for Equal Variance
+library(car)
+#levene_test <- leveneTest(log_salary ~ Is_top_5_League, data = data)
+#print(levene_test)
+
+# Perform the T-test
+t_test_result <- t.test(top_5_leagues, non_top_5_leagues, var.equal = TRUE)
+
+# Print the t-test results
+print(t_test_result)
+
+# Conclusion based on p-value
+if(t_test_result$p.value < 0.05) {
+  print("Reject H0: There is a significant difference in salary between Top 5 and non-Top 5 leagues.")
+} else {
+  print("Fail to reject H0: There is no significant difference in salary between Top 5 and non-Top 5 leagues.")
+}
+```
+
+A two-sample t-test was conducted to examine whether there is a significant difference in average log-transformed salary between players in Top 5 leagues and those in non-Top 5 leagues. The test resulted in a t-value = 85.712 with df = 35476, and a p-value \< 2.2e-16, which is highly significant.
+
+The mean log-salary for players in Top 5 leagues was 13.51545, while the mean log-salary for players in non-Top 5 leagues was 10.857. The 95% confidence interval for the difference in means was [2.597, 2.719], indicating that the average salary for players in Top 5 leagues is significantly higher than those in non-Top 5 leagues.
+
+Since the p-value is far below the 0.05 significance level, we reject the null hypothesis (H0). This suggests that there is a statistically significant difference in average salary between players in Top 5 leagues and those in non-Top 5 leagues, with players in Top 5 leagues earning higher salaries on average.
+
+### 8. Conclusion - Part 2
+
+**Pair 1**
+
+-   H0: There is no correlation between players' current reputation and their annual salary.
+
+-   Ha: There is a correlation between players' current reputation and their annual salary.
+
+-   Variables: Reputation (Continuous, Approaching Normal), Transformed Salary (Continuous, Normal)
+
+-   *Conclusion*: A Pearson correlation was conducted to examine the relationship between reputation and log-transformed salary. The results indicated a strong positive correlation, (r=0.84, n=35,477, p \< 0.001). There is therefore evidence to reject the null hypothesis in favor of the alternative hypothesis, suggesting that players with higher reputations tend to earn significantly higher salaries.
+
+**Pair 2**
+
+-   H0: There is no correlation between players' current reputation and their annual salary.
+
+-   Ha: There is a correlation between players' current reputation and their annual salary.
+
+-   Variables: Reputation (Continuous), Transformed Salary (Continuous)
+
+-   *Conclusion*: A Pearson correlation was conducted to examine the relationship between age and log-transformed salary. The results indicated a weak positive correlation (r=0.091, n=35,477, p\<0.001). There is evidence to reject the null hypothesis in favor of the alternative hypothesis, suggesting a slight tendency for older players to earn higher salaries, although the relationship is not strong.
+
+**Pair 3**
+
+-   H0: There is no association between EU nationality and the league/nation (Based) where the club is located.
+
+-   Ha: There is an association between EU nationality and the league/nation (Based) where the club is located.
+
+-   Variables: EU National (Binary Nominal), Based (Nominal with multiple categories)
+
+-   *Conclusion*: A chi-square test of independence revealed a statistically significant association between EU nationality and the league/nation (Based) where the club is located (𝜒2=21,868, df=805, p\<0.001). This result provides evidence to reject the null hypothesis in favor of the alternative hypothesis. The association indicates that players' nationalities (EU or non-EU) are significantly related to the leagues or nations in which they play, likely reflecting regional preferences or work eligibility cons
+
+**Pair 4**
+
+-   H0: There is no correlation between salary and the league/nation (Based) where the club is located.
+
+-   Ha: There is a correlation between salary and the league/nation (Based) where the club is located.
+
+-   Variables: Transformed Salary (Continuous), Based (Nominal with multiple categories)
+
+-   *Conclusion*: A one-way analysis of variance (ANOVA) was conducted to examine the effect of league/nation (Based) on log-transformed salary. The results indicated a significant difference between the groups (F(14,125.03)=30.16, p\<0.001).
+
+    The mean and standard deviation of log-transformed salaries for each group are as follows:
+
+    |  |  |  |
+    |------------------------------------|------------------|------------------|
+    | **League/Nation (Based)** | **Mean (Log Salary)** | **SD (Log Salary)** |
+    | England (Premier League) | 14 | 1.83 |
+    | France (Ligue 1) | 13.01 | 1.76 |
+    | Germany (Bundesliga) | 13.82 | 1.31 |
+    | Italy (Serie A) | 13.25 | 1.82 |
+    | Mexico (Liga Mx) | 13.23 | 0.79 |
+    | Qatar (Lower Division) | 13.13 | 0.13 |
+    | Qatar (QNB Stars League) | 13.9 | 0.81 |
+    | Russia (RPL) | 13.3 | 0.92 |
+    | Saudi Arabia (First Division League) | 13.38 | 0.83 |
+    | Saudi Arabia (Saudi Pro League) | 14.56 | 1.21 |
+    | Saudi Arabia (Second Division Grp A) | 13.27 | 0.29 |
+    | Saudi Arabia (Second Division Grp B) | 13.59 | 0.4 |
+    | Spain (LaLiga) | 13.36 | 1.65 |
+    | U.A.E. (First Division League) | 13.34 | 0.42 |
+    | U.A.E. (Pro League) | 13.79 | 0.6 |
+
+    The calculated effect size (η2=0.18) indicates a moderate effect, with 18% of the variance in log-transformed salary explained by league/nation classification. These results provide strong evidence to reject the null hypothesis in favor of the alternative hypothesis, confirming that league/nation significantly impacts salary.
+
+**Pair 5**
+
+-   H0: There is no difference in average salary between players in Top 5 leagues and those in non-Top 5 leagues.
+
+-   Ha: There is a difference in average salary between players in Top 5 leagues and those in non-Top 5 leagues.
+
+-   Variables: Is_Top_5_League (Binary Nominal), Transformed Salary (Continuous)
+
+-   *Conclusion*: A two-sample t-test was conducted to compare the means of log-transformed salaries between players in Top 5 leagues and those in non-Top 5 leagues. The results indicated a significant difference (t(35,476) = 85.71, p\<0.001).
+
+    -   **Top 5 Leagues**: M=13.52, SD=0.87
+
+    -   **Non-Top 5 Leagues**: M=10.86, SD=1.23
+
+    The calculated effect size (d=2.57) indicates a very large effect. There is strong evidence to reject the null hypothesis in favor of the alternative hypothesis, confirming that players in Top 5 leagues earn significantly higher salaries.
+
+### References CA_1
+
+Cohen, J. (1988). Statistical power analysis for the behavioral sciences (2nd ed.). Hillside, NJ: Lawrence Erlbaum Associates.
+
+Cohen, S., Kamarck, T., & Mermelstein, R. (1983). A global measure of perceived stress. Journal of Health and Social Behavior, 24(4), 385–396.
+
+Crowne, D. P., & Marlowe, D. (1960). A new scale of social desirability independent of psychopathology. Journal of Consulting Psychology, 24(4), 349–354.
+
+Curran, P. J., West, S. G., & Finch, J. F. (1996). The robustness of test statistics to nonnormality and specification error in confirmatory factor analysis. Psychological Methods, 1(1), 16–29.
+
+Field, A., Miles, J., & Field, Z. (2012). Discovering statistics using IBM SPSS statistics (4th ed.). Sage Publications Limited.
+
+Lakens, D., et al. (2018). Calculating and reporting effect sizes to facilitate cumulative science: A practical primer for t-tests and ANOVAs. Frontiers in Psychology, 9, 325.
+
+Levene, H. (1960). Robust tests for equality of variances. In Contributions to Probability and Statistics (pp. 278–292). Stanford University Press.
+
+Osborne, J. W. (2002). Notes on the use of data transformations. Practical Assessment, Research & Evaluation, 8(6), 1-7.
+
+Pallant, J. (2000). Development and validation of a scale to measure perceived control of internal states. Journal of Personality Assessment, 75(2), 308–337.
+
+Pearlin, L., & Schooler, C. (1978). The structure of coping. Journal of Health and Social Behavior, 19(1), 2–21.
+
+Rosenberg, M. (1965). Society and the adolescent self-image. Princeton, NJ: Princeton University Press.
+
+Scheier, M. F., & Carver, C. S. (1985). Optimism, coping, and health: Assessment and implications of generalized outcome expectancies. Health Psychology, 4(3), 219–247.
+
+Tabachnick, B. G., & Fidell, L. S. (2012). Using multivariate statistics (6th ed.). Pearson.
+
+Watson, D., Clark, L. A., & Tellegen, A. (1988). Development and validation of brief measures of positive and negative affect: The PANAS scales. Journal of Personality and Social Psychology, 54(6), 1063–1070.
+
+Welch, B. L. (1951). On the comparison of several mean values: An alternative approach to the analysis of variance. Biometrika, 38(3/4), 330-336.
+
+-------------------------------------------------------------------------------------------
+
+--------------------------------------- **Part_3** ----------------------------------------
+
+-------------------------------------------------------------------------------------------
+
+### 9. Multiple Linear Regression
+
+This statistical analysis explores whether a combination of player-specific characteristics, including reputation, age, and their interactions, significantly predicts annual salary. Specifically, the following research questions are addressed:
+
+-   Can player **reputation**, **age**, and their interaction with match appearances (**Apps**) predict **log-transformed salary**?
+-   Does adding player **caps** to the predictors improve the prediction of log-transformed salary?
+
+To answer these questions, two multiple linear regression models are developed:
+
+-   Model 1: Includes reputation, age, and the interaction term (Reputation × Apps).
+-   Model 2: Builds on Model 1 by adding Caps as an additional predictor.
+
+The dataset consists of data from 35,478 professional football players across global leagues, with variables of interest such as annual salary (log-transformed for normality), reputation, age, match appearances (Apps), and caps.
+
+Section 2 describes data preparation for regression analysis. Section 3 presents model fitting, diagnostics, and interpretation. Section 4 compares the two models. Section 5 discusses the study's conclusions. A significance threshold of 0.05 is used, with effect sizes following Cohen’s conventions (Cohen, 1988).
+
+```{r, echo=FALSE, results='hide', warning=FALSE, message=FALSE}
+colnames(data)
+str(data)
+```
+
+#### 9.1 Hypothesis
+
+##### 9.1.1 Model 1 Hypothesis
+
+-   H0: There is no relationship between log-transformed salary and predictors, including reputation, age, and their interaction with Apps.
+
+-   Ha: There is a relationship between log-transformed salary and predictors, including reputation, age, and their interaction with Apps.
+
+-   Variables: Transformed Salary, Age, Reputation, Apps.
+
+##### 9.1.2 Model 2 Hypothesis
+
+-   H0: Adding Caps to the predictors does not significantly improve the model's prediction of log-transformed salary.
+
+-   Ha: Adding Caps to the predictors significantly improves the model's prediction of log-transformed salary.
+
+-   Variables: Transformed Salary, Age, Reputation, Apps, Caps.
+
+#### 9.2 Data Description
+
+The dataset contains variables collected on players across multiple leagues:
+
+-   Outcome Variable: Log-transformed salary (continuous).
+
+    -   Predictors for Model 1:
+    -   Reputation (continuous).
+    -   Age (continuous).
+    -   Interaction term: Reputation × Apps (continuous).
+
+-   Predictors for Model 2:
+
+    -   Reputation (continuous).
+    -   Age (continuous).
+    -   Interaction term: Reputation × Apps (continuous).
+    -   Caps (continuous).
+
+#### 9.3 Predicting Salary: The Role of Reputation, Age, Apps, and Caps
+
+This section discusses the multiple linear regression models developed to examine the predictors of log-transformed salary in professional football players. Specifically, the study investigates how a combination of player characteristics, including reputation, age, and their interaction with match appearances, can predict salary. Additionally, a second model is developed by including player caps as an additional predictor. The models' fit and usefulness are assessed, and the results are interpreted to determine how each predictor impacts salary. The section also provides an evaluation of how the models meet the assumptions of linear regression, ensuring the reliability of the findings.
+
+##### 9.3.1 Preprocessing
+
+-   Missing values were checked, and none were found for the variables of interest.
+-   Salary was log-transformed to improve normality.
+-   Descriptive statistics and correlation matrices were used to explore relationships between predictors and the outcome variable.
+
+```{r, echo=FALSE, results='hide', warning=FALSE, message=FALSE}
+# Descriptive statistics
+summary(data$log_salary)
+summary(data$Reputation)
+summary(data$Age)
+summary(data$Apps)
+summary(data$Caps)
+
+# Check for missing data
+colSums(is.na(data))
+
+# Create interaction term for Model 1 and Model 2
+data$Reputation_Apps <- data$Reputation * data$Apps
+
+```
+##### 9.3.2 Model Fitting
+
+###### Model 1: Exploring the Combined Impact of Reputation, Age, and Apps on Salary
+
+A multiple linear regression model was fitted using Reputation, Age, and their interaction with Apps (Reputation × Apps) as predictors for log-transformed salary.
+
+The regression equation is expressed as follows:
+
+log(Salary) = β0 + β1 x (Reputation) + β2 x (Age) + β3 x (Reputation × Apps) + ϵ
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+# Fit the linear regression model
+linear_model_1 <- lm(log_salary ~ Reputation + Age + Reputation_Apps, data = data)
+
+# Display model summary statistics
+summary(linear_model_1)
+ 
+```
+
+A statistically significant linear regression model was found for **Model 1**
+
+(F(3, 35474) = 3.17e+04, p \< 0.01)
+
+with an adjusted R² of 0.7285:
+
+**log(Salary) = 6.32 + 0.00119 × Reputation - 0.0525 × Age + 5.66e-07 × Reputation × Apps**
+
+In this model, all predictors were statistically significant:
+
+-   Reputation (p\<0.001)
+-   Age (p\<0.001)
+-   Reputation × Apps (p\<0.001)
+
+This model explains 72.85% of the variance in log-transformed salary, suggesting that reputation, age, and the interaction between reputation and match appearances are strong predictors of salary.
+
+###### Model 2: Salary Prediction Incorporating Caps, Reputation, Age, and Apps
+
+Building on Model 1, Caps was added as a predictor to assess its impact on the prediction of log-transformed salary. The regression equation is expressed as:
+
+log(Salary) = β0 + β1 x (Reputation) + β2 x (Age) + β3 x (Reputation × Apps) + β4 x (Caps) + ϵ
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+# Fit Model 2
+linear_model_2 <- lm(log_salary ~ Reputation + Age + Reputation_Apps + Caps, data = data)
+
+# Display model summary statistics
+summary(linear_model_2)
+ 
+```
+
+For **Model 2**, which includes Caps as an additional predictor, a statistically significant regression equation was also found
+
+(F(4, 35473) = 2.39e+04, p \< 0.01)
+
+with an adjusted R² of 0.7293:
+
+**log(Salary) = 6.40 + 0.00119 × Reputation - 0.0552 × Age + 5.60e-07 × Reputation × Apps + 0.00382 × Caps**
+
+All predictors were statistically significant:
+
+-   Reputation (p\<0.001)
+-   Age (p\<0.001)
+-   Reputation × Apps (p\<0.001)
+-   Caps (p\<0.001)
+
+The adjusted R² value of 0.7293 suggests that the addition of Caps slightly improves the model's ability to explain the variance in salary, increasing the explanatory power to 72.93%.
+
+##### 9.3.3 Model Diagnostics
+
+###### Assumptions Check
+
+-   Linearity: The relationship between the predictors (Reputation, Age, Reputation × Apps, and Caps) and log-transformed salary is assumed to be linear. Visual inspection of residual plots will confirm this.
+
+-   Homoscedasticity: The variance of residuals should be constant across all levels of predictors. Residual vs. fitted plots will assess this.
+
+-   Normality of Residuals: Residuals should follow a normal distribution. A histogram and Q-Q plot of residuals will be used.
+
+-   Multicollinearity: Variance Inflation Factor (VIF) will check for multicollinearity among predictors.
+
+-   Outliers and Influential Points: Cook's distance and leverage statistics will identify influential observations.
+
+###### Model 1: Assessing Residuals and Influential Points in the Combined Model
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+# Residuals plots for Model 1
+par(mfrow = c(2, 2))
+plot(linear_model_1)
+
+# Histogram of residuals for Model 1
+hist(residuals(linear_model_1), main = "Histogram of Residuals (Model 1)", xlab = "Residuals")
+
+# Q-Q plot of residuals for Model 1
+qqnorm(residuals(linear_model_1))
+qqline(residuals(linear_model_1))
+
+# Check multicollinearity (VIF)
+vif(linear_model_1)
+
+# Cook's distance to identify influential points
+plot(cooks.distance(linear_model_1), main = "Cook's Distance (Model 1)")
+abline(h = 4/(nrow(data) - length(coef(linear_model_1))), col = "red", lty = 2)
+
+```
+```{r}
+# Residuals vs predictors for Model 1
+residuals_1 <- residuals(linear_model_1) # Extract residuals
+predictors_1 <- names(linear_model_1$model)[-1] # Get predictor names
+
+# Loop through predictors and create plots for Model 1
+for (predictor in predictors_1) {
+  plot <- ggplot(data, aes_string(x = predictor, y = residuals_1)) +
+    geom_point() +
+    geom_hline(yintercept = 0, color = "red", linetype = "dashed") +
+    labs(title = paste("Residuals vs", predictor, "(Model 1)"),
+         x = predictor,
+         y = "Residuals") +
+    theme_minimal()
+  
+  print(plot) # Display the plot
+}
+    
+```
+
+The data met the assumption of non-zero variances for the predictors in the model: Reputation (1.83), Age (2.30), and Reputation_Apps (3.34).
+
+The residual diagnostic plots for the linear regression model are displayed above. The model residuals showed a satisfactory distribution, with a density plot resembling normality. Minor deviations were observed in the Q-Q plot, suggesting slight non-normality in the residuals. The maximum residual value was 0.53, and the minimum was -5.45. These values indicate that the residuals are fairly well distributed, with only slight skewness observed.
+
+Examination of Cook’s distance revealed a maximum value of 0.0084, which is well below the threshold of 1. This indicates that no individual data points exert undue influence on the regression model. Although one potential leverage point was identified, the observation was inspected and deemed valid, and thus retained in the analysis. Therefore, the distribution of residuals can be considered normal, with no influential points that would affect the model.
+
+Further inspection of the residuals versus fitted values and residuals versus predictors plots displayed a generally random scatter around the zero line. No significant funnel shapes or patterns were observed, suggesting that the assumption of constant variance (homoscedasticity) is met. A slight distortion of the zero line in the residuals versus fitted values plot was not substantial enough to raise concerns about non-linearity or heteroscedasticity.
+
+Finally, multicollinearity tests indicated that multicollinearity was not a concern, with the following Variance Inflation Factor (VIF) results:
+
+-   Reputation: 1.83
+-   Age: 2.30
+-   Reputation_Apps: 3.34
+
+These VIF values are all below the threshold of 10, suggesting that the predictors are not highly collinear.
+
+In summary, the model meets the key assumptions of multiple linear regression, including linearity, normality of residuals, homoscedasticity, and low multicollinearity, with no concerns regarding influential points. The model diagnostics suggest that it provides a reliable estimate of the relationship between the predictors (Reputation, Age, and Reputation_Apps) and the log-transformed salary.
+
+###### Model 2: Diagnostic Evaluation of the Extended Salary Prediction Model with Caps
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+# Residuals plots for Model 2
+par(mfrow = c(2, 2))
+plot(linear_model_2)
+
+# Histogram of residuals for Model 2
+hist(residuals(linear_model_2), main = "Histogram of Residuals (Model 2)", xlab = "Residuals")
+
+# Q-Q plot of residuals for Model 2
+qqnorm(residuals(linear_model_2))
+qqline(residuals(linear_model_2))
+
+# Check multicollinearity (VIF)
+vif(linear_model_2)
+
+# Cook's distance to identify influential points
+plot(cooks.distance(linear_model_2), main = "Cook's Distance (Model 2)")
+abline(h = 4/(nrow(data) - length(coef(linear_model_2))), col = "red", lty = 2)
+
+```
+
+```{r}
+# Residuals vs predictors for Model 2
+residuals_2 <- residuals(linear_model_2) # Extract residuals
+predictors_2 <- names(linear_model_2$model)[-1] # Get predictor names
+
+# Loop through predictors and create plots for Model 2
+for (predictor in predictors_2) {
+  plot <- ggplot(data, aes_string(x = predictor, y = residuals_2)) +
+    geom_point() +
+    geom_hline(yintercept = 0, color = "red", linetype = "dashed") +
+    labs(title = paste("Residuals vs", predictor, "(Model 2)"),
+         x = predictor,
+         y = "Residuals") +
+    theme_minimal()
+  
+  print(plot) # Display the plot
+}
+    
+```
+
+The data met the assumption of non-zero variances (Reputation=7629.85, Age=30.63, Reputation_Apps=1572.39, Caps=136.68).
+
+The residual diagnostic plots are shown above. The model residuals showed a satisfactory distribution with a density plot resembling normality, although minor deviations were observed in the Q-Q plot, indicating slight non-normality in the residuals (max=0.5293, min=-5.3944). However, examination of residuals using the guidance of Field, Miles, and Field (2012) identified no residuals with Cook’s distance greater than 1. The maximum Cook’s distance was found to be 0.0179, suggesting that there are no highly influential points that need to be removed.
+
+Inspection of the residuals vs. fitted values and residuals vs. predictors plots displayed a generally random scatter around the zero line, with no significant funnel shapes or patterns, which suggests that the assumption of constant variance (homoscedasticity) is met. The slight distortion of the zero line on the residuals vs. fitted line was not substantial enough to indicate major concerns with non-linearity or heteroscedasticity.
+
+Tests to check if the data met the assumption of collinearity indicated that multicollinearity was not a concern, with all Variance Inflation Factor (VIF) values below 10: Reputation (VIF=1.85), Age (VIF=2.36), Reputation_Apps (VIF=3.34), and Caps (VIF=1.14).
+
+The model can be considered to meet the assumptions of multiple linear regression, including linearity, normality of residuals, homoscedasticity, and low multicollinearity, with minimal concerns about influential points. The model diagnostics suggest that it provides a reliable estimate of the relationship between salary and the predictors Reputation, Age, Reputation_Apps, and Caps.
+
+##### 9.3.4 Results and Interpretation
+
+###### Model 1: Analyzing Interaction Effects of Reputation, Age, and Apps
+
+The regression equation for **Model 1** reveals that for each unit increase in Reputation, the log of salary is expected to increase by 0.00119 units, while Age has a negative relationship with the log of salary, with a decrease of 0.05253 units for each year increase. For every unit increase in Reputation_Apps, the log of salary increases by 0.000000566 units. When all predictors are at their baseline values, the model estimates a log salary of 6.32. This model explains 72.85% of the variance in the log of salary, as indicated by the R-squared value.
+
+Using the mean values of the predictors, the predicted log salary is 19.04, which is higher than the observed mean of 19.03. This indicates that the model tends to slightly overestimate the log salary, though the difference is minimal and not statistically significant. These results suggest that the model provides a good fit and captures the key factors influencing salary.
+
+###### Model 2: Insights from Caps-Enhanced Predictions on Salary
+
+In **Model 2**, which includes Caps as an additional predictor, the coefficients for Reputation, Age, and Reputation_Apps remain largely unchanged, with each predictor showing similar effects on the log of salary as in Model 1. The additional variable, Caps, is found to have a positive relationship with the log of salary, with an increase of 0.00382 units for each additional match played. The intercept value for this model is 6.40, indicating the log salary when all predictors are at their baseline levels. This model explains 72.94% of the variance in the log salary, which is a slight improvement over Model 1.
+
+Using the mean values of the predictors, the predicted log salary is again 19.04, which is very close to the observed mean of 19.03. This indicates that the addition of Caps has little effect on the model's ability to predict log salary. The difference between predicted and observed log salary remains minimal, suggesting the model provides a reliable estimate of the relationship between salary and the predictors.
+
+#### 9.4 Comparison of Models
+
+Both models showed strong and significant associations between Reputation, Age, Reputation_Apps, and Caps with salary (all p \< 0.001), with stable coefficients across both models. Including Caps in the second model did not reveal any significant differential effects. Moreover, the addition of Caps slightly reduced the proportion of variance explained by the model (adjusted R² = 0.7294 vs. 0.7285), indicating that Caps did not substantially enhance the model’s explanatory power. This result aligns with exploratory analysis, which showed that Reputation, Age, and Reputation_Apps were the primary contributors to the model’s predictive ability.
+
+#### 9.5 Conclusion
+
+This analysis of salary prediction using multiple linear regression demonstrated that Reputation, Age, and Reputation_Apps are key predictors of salary, with Reputation and Reputation_Apps having positive associations, and Age showing a negative relationship with salary. The addition of Caps in the second model did not significantly improve the model's ability to explain salary, as indicated by the minimal increase in the adjusted R² value.
+
+The models satisfied the assumptions of multiple linear regression, including linearity, normality of residuals, homoscedasticity, and low multicollinearity. The results suggest that the relationship between the predictors and salary is stable and reliable. Further research could explore additional variables, such as education level or geographic location, to enhance the model's explanatory power. Additionally, investigating potential interactions between Reputation and Age could provide deeper insights into their joint influence on salary.
+
+In summary, while Caps was found to be a statistically significant predictor, it does not add significant explanatory value to the model. Future studies should explore other potential predictors or model adjustments to improve the precision of salary predictions.
+
+### References CA_2
+
+Cohen, S., Kamarck, T. & Mermelstein, R. (1983). A global measure of perceived stress. Journal of Health and Social Behavior, 24, 385–96. 
+
+Cohen, J. (1988). Statistical power analysis for the behavioral sciences (2nd ed.). Hillside, NJ: Lawrence Erlbaum Associates. 
+
+Crowne, D.P. & Marlowe, D. (1960). A new scale of social desirability independent of psychopathology. Journal of Consulting Psychology, 24, 349–54. 
+
+Curran, Patrick J., Stephen G. West, and John F. Finch. (1996). “The robustness of test statistics to nonnormality and specification error in confirmatory factor analysis.” Psychological Methods, 1.1, 16.
+
+Diener, E., Emmons, R.A., Larson, R.J. & Griffin, S. (1985). The Satisfaction with Life scale. Journal of Personality Assessment, 49, 71–6. 
+
+Field, A., Field, Z., & Miles, J. (2020). Discovering statistics using IBM SPSS statistics (5th ed.). Sage Publications Limited. 
+
+Pallant, J. (2020). Survival manual: A step by step guide to data analysis using SPSS (7th ed.). Taylor & Francis. 
+
+Scheier, M.F. & Carver, C.S. (1985). Optimism, coping and health: An assessment and implications of generalized outcome expectancies. Health Psychology, 4, 219–47. 
+
+Tabachnik, B.G., & Fidell, L.S. (2013). Using Multivariate Statistics (6th ed.). Pearson.

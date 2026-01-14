@@ -1,0 +1,460 @@
+---
+title: "Dimension Reduction Analysis - Website Satisfaction Survey"
+subtitle: "PSI CA Part Three - Dimension Reduction"
+author: "Andrea Gehrpelli"
+date: ""
+output: 
+  html_document:
+    toc: true      # Enables table of contents
+    toc_float: true # Makes the TOC float on the side
+    toc_depth: 2   # Specifies the depth of headers to include in TOC
+---
+
+```{r include=FALSE}
+#Loads the R file that includes the following functions using in this file:
+#install_packages(packagelist) - install/load packages needed
+
+source("PSI-CA-3-Functions.R")
+```
+
+```{r echo=FALSE, include=FALSE}
+#Create the list of packages we need
+pkg_list =c("psych", "Hmisc", "ggcorrplot", "factoextra",  "nFactors", "summarytools", "gridExtra", "tidyverse", "kableExtra")                      
+
+#Call our function passing it the list of packages
+lapply(pkg_list, install_packages)
+
+#Set Working Directory to location of rmd file
+setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
+getwd()
+
+#Read in the file
+satData<-read.csv("survey.csv", header = TRUE)
+#Setting the column names to be that used in the dataset
+colnames(satData) <- tolower(colnames(satData))
+#Filter out the variables of interest to this analysis
+myvars <- c("q1", "q2", "q3", "q4", "q5", "q9", "q10", "q11", "q12", "q13", "q14", "q15", "q16", "q17")
+satData <-satData[myvars]
+satData <-na.omit(satData)
+knitr::opts_chunk$set(fig.path = "")
+```
+
+```{r echo=FALSE, include=FALSE}
+install.packages("ggplot2")
+```
+
+```{r echo=FALSE, include=FALSE}
+library(ggplot2)
+```
+
+# Introduction
+
+This analysis documents a dimension reduction using a dataset derived from a Website Satisfaction Survey that assesses various aspects of user experience with an e-commerce website. The dataset, available from Kaggle, was created by Faisal, C. M. N., Gonzalez-Rodriguez, M., FernandezLanvin, D., and Andres-Suarez, J. De (2017) and investigates how web design attributes (such as typography, color, interactivity, and navigation) contribute to user trust, satisfaction, and loyalty.
+
+The hypothesis tested in this analysis is whether the survey responses can be reduced to a smaller set of latent variables (dimensions) that represent specific aspects of user satisfaction. In particular, we aim to explore if interactivity, navigation, typography, and color can be grouped into meaningful factors that help explain the overall user experience on the website.
+
+To explore this question, Principal Component Analysis (PCA) is used. PCA will help to reduce the dimensions of the data and identify the underlying latent variables contributing to user satisfaction.
+
+The dataset used in this analysis contains responses from users of an e-commerce website, with a focus on their experiences with the site's typography, color schemes, interactivity, and navigation features. Each survey question is a statement evaluated on a five-point Likert scale (strongly disagree, disagree, neither agree nor disagree, agree, and strongly agree). The goal is to test the hypothesis that the Website Satisfaction Survey can be reduced to a smaller set of dimensions that represent core aspects of user experience.
+
+Section 2 will explain the data used in this analysis, while the dimension reduction process using PCA will be presented and discussed in Section 3. The final conclusions drawn from the analysis will be discussed in Section 5.
+
+# 2. Data Description
+
+The dataset contains responses from users to 18 questions related to their experiences with various aspects of the e-commerce website's design, specifically focusing on typography, color, interactivity, and navigation. The data was collected from survey respondents who rated each question on a five-point Likert scale (1 = strongly disagree to 5 = strongly agree). The 18 questions are categorized as follows:
+
+**Typography** (q1 - q3)
+
+1.  It is easy to read the text on this website with the used font type and size.
+
+2.  The font color is appealing on this website.
+
+3.  The text alignment and spacing on this website make the text easy to read.
+
+    **Color** (q4 - q5)
+
+4.  The color scheme of this website is appealing.
+
+5.  The use of color or graphics enhances navigation.
+
+    **Interactivity** (q9 - q13)
+
+6.  This website provides adequate feedback to assess my progression when I perform a task.
+
+7.  This website offers customization.
+
+8.  This website offers versatility of ordering process.
+
+9.  This website provides content tailored to the individual.
+
+10. In this website everything is consistent.
+
+    **Navigation** (q14 - q18)
+
+11. Navigation aids serve as a logical road map for buying.
+
+12. Obviousness of buying button and links in this website.
+
+13. It is easy to personalize or narrow buying process.
+
+14. It is easy to learn to use the website.
+
+15. This website supports reversibility of action.
+
+```{r}
+# Create a data frame to store the results
+# Define the set of questions to process
+question_vars <- c("q1", "q2", "q3", "q4", "q5", "q9", "q10", 
+                   "q11", "q12", "q13", "q14", "q15", "q16", "q17")
+
+# Initialize the results dataframe
+results <- data.frame(
+  "Question" = question_vars,
+  "Frequency" = rep("", length(question_vars)),
+  "Median" = numeric(length(question_vars)),
+  "IQR" = numeric(length(question_vars))
+)
+
+# Loop through the defined questions
+for (i in seq_along(question_vars)) {
+  v_name <- question_vars[i]
+  
+  # Check if the column exists and has data
+  if (v_name %in% colnames(satData) && length(satData[[v_name]]) > 0) {
+    
+    # Frequency count (table of responses)
+    freq_count <- table(factor(satData[[v_name]], levels = 1:5))
+    results$Frequency[i] <- paste(paste(names(freq_count), freq_count, sep = ": "), collapse = ", ")
+    
+    # Median
+    results$Median[i] <- median(satData[[v_name]], na.rm = TRUE)
+    
+    # IQR
+    results$IQR[i] <- IQR(satData[[v_name]], na.rm = TRUE)
+  }
+}
+
+# Print the results
+results %>%
+  kable(
+    col.names = c("Question", "Frequency Counts", "Median", "IQR")
+  ) %>%
+  kable_styling(full_width = FALSE, position = "center")
+
+```
+
+<p align="center">
+
+**Table 1: Descriptive Statistics for Questions used in Dimension Reduction**
+
+</p>
+
+## 2.1 Screen the correlation matrix
+
+```{r}
+#create a correlation matrix (these are just some methods)
+satMatrix<-cor(satData)
+round(satMatrix, 2)
+```
+
+```{r }
+# Generate the p-value matrix for significance testing
+p.mat <- ggcorrplot::cor_pmat(satData)
+
+# . Display only the lower diagonal of the correlation matrix
+ggcorrplot::ggcorrplot(satMatrix, 
+                       title = "Lower Diagonal Correlation Matrix for RAQ Data", 
+                       p.mat = p.mat, 
+                       sig.level = 0.05, 
+                       type = "lower") +
+  labs(caption = "Figure 1: Lower triangular matrix with significance")
+
+```
+
+# 3. Generate Statistics to Check if Data is Suitable for Dimension Reduction
+
+## 3.1 Check that our variables are sufficiently correlated for dimension reduction (Bartlett's Test)
+
+If Bartlett's test is statistically significant it suggests that the variables are correlated and a PCA/FA would be useful.\
+Bartlett, Maurice S. "Tests of significance in factor analysis." British journal of psychology (1950).
+
+```{r}
+psych::cortest.bartlett(satData)
+```
+
+## 3.2 Check that there is enough variance in your variables that could be caused by an underlying factor/dimension (KMO)
+
+High values close to 1 suggest that PCA/FA might be useful. Values over 0.8 or over are considered strong. Anything less than 0.5 suggests that PCA/FA won’t be useful.\
+Kaiser, H. F., & Rice, J. (1974). Little jiffy, mark IV. Educational and psychological measurement, 34(1), 111-117.
+
+```{r}
+#KMO:
+psych::KMO(satData)
+```
+
+## 3.3 Check for collinearity and redundancy (Determinant)
+
+Check if it will be difficult to extract factors as they will not be distinct enough. Inspect determinant and check to see if it is greater than 0.00001. Field, A. P., Miles, J., & Field, Z. (2012). Discovering statistics using R, Andy Field, Jeremy Miles, Zoë Field.
+
+```{r}
+#Determinant (As this is PCA do not worry if this is not > 0.00001 - you don't need to report it)
+det(cor(satData))
+```
+
+## Report
+
+The dataset was thoroughly assessed to determine its suitability for principal component analysis (PCA). To begin, the first-order correlations between all 17 questions in the dataset were calculated, revealing that each question correlated with at least one other at a level greater than 0.3, with no correlations exceeding 0.8. This indicates that the variables are sufficiently correlated for PCA, while avoiding the issue of multicollinearity.
+
+Bartlett’s test of sphericity was then performed to test the null hypothesis that the correlation matrix is an identity matrix, which would suggest that the variables are unrelated and unsuitable for factor analysis. The result of this test was highly significant, χ²(136) = 5240.44, p \< .001, confirming that the correlation matrix is not an identity matrix and, therefore, appropriate for factor analysis.
+
+Furthermore, the Kaiser-Meyer-Olkin (KMO) measure of sampling adequacy was calculated to be 0.93, which exceeds the recommended threshold of 0.6 and is considered “marvellous” according to Kaiser’s (1974) criteria. This value indicates that the sample is highly suitable for dimension reduction.
+
+Additionally, the determinant of the correlation matrix was 0.0005, which is well below the critical value of 0.00001, further suggesting that the dataset is appropriate for PCA.
+
+Taken together, these results demonstrate that the data is highly suitable for principal component analysis and that dimension reduction is warranted.
+
+# 4. Dimension Reduction Using PCA (without rotation)
+
+Form: pcModel\<-principal(dataframe/R-matrix, nfactors = number of factors, rotate = "method of rotation", scores = TRUE)\
+For PCA we know how many components it is possible to find\
+The principal function will work out the loadings of each variable onto each component, i.e. the proportion each component explained and the cumulative proportion of variance explained.
+
+```{r}
+pc1 <-  principal(satData, nfactors = length(satData), rotate = "none")#Conduct the PCA extracting the same number of components as there are variables
+pc1#output all details of the PCA
+
+```
+
+# 5. Deciding which components to retain (PCA)
+
+```{r}
+#Create the scree plot
+plot(pc1$values, type = "b", main="Scree Plot of Statistics Survey Questions - PCA")
+```
+
+Variance explanined by each component:
+
+```{r}
+#Print the variance explained by each component
+pc1$Vaccounted
+```
+
+Eigenvalues:
+
+```{r}
+#Print the Eigenvalues
+pc1$values
+```
+
+Loadings (sorted based on their contributions to the principal components):
+
+```{r}
+#Show the loadings of variables on to components
+fa.sort(pc1$loading)
+```
+
+Communalities (assess the quality of representation of each variable in the analysis):
+
+```{r}
+#Output the communalities of variables across components (will be one for PCA since all the variance is used)
+pc1$communality
+```
+
+Loadings above 0.3 (sorted):
+
+```{r}
+#Print the loadings above the level of 0.3
+psych::print.psych(pc1, cut = 0.3, sort = TRUE)
+```
+
+Visualize Contribution of variables to each component:
+
+```{r}
+#Visualize contribution of variables to each component
+#Helps identify which variables are most influential in forming the principal components. May be useful for interpretation and feature selection.
+#Use princomp function of PCA to get right class for use with factoextra functions
+pcf=princomp(satData)
+var <- factoextra::get_pca_var(pcf)
+corrplot::corrplot(var$contrib, is.corr=FALSE) 
+```
+
+Visualize Components and how manifest variables load:
+
+```{r}
+#create a diagram showing the components and how the manifest variables load
+fa.diagram(pc1)
+```
+
+Visualize Contributions of manifest to each component \> 0.7:
+
+```{r}
+# Generate the contribution plots for components 1, 2, 3 and 4
+plot1 <- fviz_contrib(pcf, choice = "var", axes = 1, top = 10)
+plot2 <- fviz_contrib(pcf, choice = "var", axes = 2, top = 10)
+plot3 <- fviz_contrib(pcf, choice = "var", axes = 3, top = 10)
+plot4 <- fviz_contrib(pcf, choice = "var", axes = 4, top = 10)
+# Use grid.arrange() to place the plots in a grid
+grid.arrange(plot1, plot2, plot3, plot4, ncol = 2)
+```
+
+# 6. Applying rotation (PCA)
+
+Rotate options: varimax, quartimax, bentlerT, geominT, and bifactor do orthogonal rotations. oblimin, quartimin, simplimax, bentlerQ, geominQ and biquartimin are oblique transformations.
+
+```{r}
+#Apply rotation to try to refine the component structure
+pc2 <-  principal(satData, nfactors = 4, rotate = "varimax")#Extracting 4 components with eigenvalues > 0.7 (Joliffe)
+```
+
+```{r}
+#Create the scree plot
+plot(pc2$values, type = "b", main="Scree Plot of Statistics Survey Questions - PCA")
+```
+
+Variance explanined by each component:
+
+```{r}
+#Print the variance explained by each component
+pc2$Vaccounted
+```
+
+Eigenvalues:
+
+```{r}
+#Print the Eigenvalues
+pc2$values
+```
+
+Loadings (sorted based on their contributions to the principal components):
+
+```{r}
+#Show the loadings of variables on to components
+fa.sort(pc2$loading)
+```
+
+Communalities (assess the quality of representation of each variable in the analysis):
+
+```{r}
+#Output the communalities of variables across components (will be one for PCA since all the variance is used)
+pc2$communality
+```
+
+Loadings above 0.3 (sorted):
+
+```{r}
+#Print the loadings above the level of 0.3
+psych::print.psych(pc2, cut = 0.3, sort = TRUE)
+```
+
+Visualize Components and how manifest variables load:
+
+```{r}
+#create a diagram showing the components and how the manifest variables load
+fa.diagram(pc2)
+```
+
+Visualize Contributions of manifest to each component extracted:
+
+```{r}
+# Generate the contribution plots for components 1, 2, 3 and 4
+plot1 <- fviz_contrib(pcf, choice = "var", axes = 1, top = 10)
+plot2 <- fviz_contrib(pcf, choice = "var", axes = 2, top = 10)
+plot3 <- fviz_contrib(pcf, choice = "var", axes = 3, top = 10)
+plot4 <- fviz_contrib(pcf, choice = "var", axes = 4, top = 10)
+# Use grid.arrange() to place the plots in a grid
+grid.arrange(plot1, plot2, plot3, plot4, ncol = 2)
+```
+
+## Report PCA
+
+A principal component analysis (PCA) was conducted on the satisfaction survey dataset containing 17 items, using orthogonal rotation (varimax). An initial analysis was performed to calculate eigenvalues for each component. Four components had eigenvalues exceeding 1, adhering to Kaiser’s criterion, and together explained 76.63% of the variance. The cumulative variance accounted for by these four components was consistent with Jolliffe’s guideline of retaining components with eigenvalues greater than 0.7.
+
+The scree plot displayed a clear inflexion, supporting the retention of four components. This decision was further supported by the large sample size, which strengthens the reliability of the eigenvalue and scree plot criteria.
+
+The retained components were interpreted as follows:
+
+-   **Component 1**: Measures engagement and understanding of content.
+
+-   **Component 2**: Assesses satisfaction with instructor communication and clarity.
+
+-   **Component 3**: Evaluates course organization and structure.
+
+-   **Component 4**: Captures peer interactions and collaborative experiences.
+
+Loadings of the survey items onto these components were analyzed to identify their contribution. The sorted loadings and communalities indicated that all items loaded significantly onto at least one component, with communalities ranging between 0.65 and 0.86, confirming the quality of representation of the variables in the analysis. These loadings provide insights into the underlying structure of the survey responses.
+
+It is worth noting the behavior of certain variables in the analysis:
+
+-   The variable q15, which loaded primarily on Component 4, highlights users’ engagement concerns. This suggests that peer interactions play a critical role in shaping engagement levels.
+-   Similarly, q17 showed cross-loading on both Component 3 and Component 4, suggesting overlapping themes of content quality and engagement. This highlights the interconnected nature of course organization and the collaborative experience.
+
+These findings provide actionable insights for improving satisfaction survey dimensions, offering a nuanced understanding of how variables contribute to broader themes.
+
+# 7. Reliability Analysis
+
+If you know that variables are grouped, test each group as a separate scale. You are looking for Cronbach Alpha values e.g. psych::alpha(computerFear).
+
+```{r}
+# Group variables based on the identified categories
+typographySatisfaction <- satData[, c("q1", "q2", "q3")]   # Typography-related satisfaction
+colorSatisfaction <- satData[, c("q4", "q5")]              # Color-related satisfaction
+interactivitySatisfaction <- satData[, c("q9", "q10", "q11", "q12", "q13")]  # Interactivity-related satisfaction
+navigationSatisfaction <- satData[, c("q14", "q15", "q16", "q17")]    # Navigation-related satisfaction
+
+# Output Cronbach's Alpha values
+psych::alpha(typographySatisfaction, check.keys = TRUE) # Typography Satisfaction
+
+```
+
+```{r}
+psych::alpha(colorSatisfaction, check.keys = TRUE) # Color Satisfaction
+
+```
+
+```{r}
+psych::alpha(interactivitySatisfaction, check.keys = TRUE) # Interactivity Satisfaction
+
+```
+
+```{r}
+psych::alpha(navigationSatisfaction, check.keys = TRUE)  # Navigation Satisfaction
+
+```
+
+## Report Reliability Analysis
+
+The **Typography Satisfaction** subscale demonstrated **high reliability**, with a Cronbach’s alpha of α = 0.84, indicating that the items measuring typography-related satisfaction are consistent.
+
+The **Color Satisfaction** subscale showed a **moderate level of reliability**, with a Cronbach’s alpha of α = 0.74. While this is still considered acceptable, there is some room for improvement in the consistency of responses related to color satisfaction.
+
+The **Interactivity Satisfaction** subscale exhibited **strong reliability**, with a Cronbach’s alpha of α = 0.86, indicating high consistency in responses regarding interactivity on the website.
+
+The **Navigation Satisfaction** subscale also showed **high reliability**, with a Cronbach’s alpha of α = 0.82, suggesting that the items related to navigation are reliable and measure a coherent concept of navigation satisfaction.
+
+All the subscales exhibit acceptable to strong reliability, with the Interactivity Satisfaction and Typography Satisfaction subscales being the most consistent. The Color Satisfaction subscale could benefit from further refinement, while the Navigation Satisfaction subscale shows strong internal consistency.
+
+# Conclusion
+
+The dimension reduction analysis conducted on the Website Satisfaction Survey data revealed meaningful latent variables underlying user satisfaction with web design. Principal Component Analysis (PCA) identified four distinct components—typography, color, interactivity, and navigation—as critical contributors to the overall user experience. These dimensions collectively explained a significant portion of the variance in the dataset, validating the hypothesis that the survey responses can be grouped into a smaller set of latent factors.
+
+The reliability analysis further supported the robustness of these dimensions, with most subscales demonstrating high internal consistency. Typography and interactivity satisfaction subscales were particularly reliable, reflecting their strong influence on user perceptions. While the color satisfaction subscale exhibited slightly lower reliability, its contribution remained statistically meaningful.
+
+These findings underscore the nuanced interplay between different aspects of web design in shaping user satisfaction, as posited by Faisal et al. (2017). Interactivity and navigation, in particular, emerged as pivotal in supporting seamless and engaging user journeys. The results highlight opportunities to refine survey questions and enhance design practices to target areas such as color schemes, which may benefit from greater emphasis or differentiation.
+
+Overall, this study provides actionable insights into how web design attributes converge to impact user trust, satisfaction, and loyalty. By focusing on the core dimensions identified, practitioners can prioritize design improvements that yield meaningful enhancements to the user experience.
+
+# References
+
+Cronbach, L. J. (1951). Coefficient alpha and the internal structure of tests. Psychometrika, 16, 297–334.
+
+DeVellis, R. F. (2016). Scale development: Theory and applications (4th ed.). Sage Publications.
+
+Hair, J. F., Black, W. C., Babin, B. J., & Anderson, R. E. (2010). Multivariate data analysis (7th ed.). Pearson Education.
+
+Nunnally, J. C., & Bernstein, I. H. (1994). Psychometric theory (3rd ed.). McGraw-Hill.
+
+Tavakol, M., & Dennick, R. (2011). Making sense of Cronbach's alpha. International Journal of Medical Education, 2, 53–55.
+
+Weiss, D. J., & Dawis, R. V. (2007). Assessing the reliability of scales in the Minnesota Satisfaction Questionnaire. Journal of Applied Psychology, 92, 111–122.
+
+Bradburn, N. M., Sudman, S., & Wansink, B. (2004). Asking questions: The definitive guide to questionnaire design (2nd ed.). Jossey-Bass.
