@@ -1,2 +1,2 @@
 # data-science-portfolio
-University data science projects showcasing data wrangling, machine learning, deep learning, NLP, and data visualization.
+Portfolio of university projects in data science, machine learning, NLP, deep learning, and analytics.
