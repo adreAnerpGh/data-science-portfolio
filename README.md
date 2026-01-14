@@ -57,9 +57,8 @@ Each project follows a structured workflow, from data collection and cleaning to
 ### Probability & Statistics
 **Statistical Analysis of Football Salaries (2023-24 Season)**
 - Correlation, ANOVA, and hypothesis testing on football player salaries
-- [View HTML report](stats-projects/football_salaries_stats.html)'stats-projects/football_salaries_stats.html'
-- [Source R Markdown](stats-projects/football_salaries_stats.Rmd)'stats-projects/football_salaries_stats.Rmd'
-
+- [stats-projects/football_salaries_stats.html](stats-projects/football_salaries_stats.html)
+- [stats-projects/football_salaries_stats.Rmd](stats-projects/football_salaries_stats.Rmd)
 
 
 
