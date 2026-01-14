@@ -25,3 +25,10 @@ Each project follows a structured workflow, from data collection and cleaning to
 - Full machine learning pipeline from data exploration to model evaluation  
 - Comparison of multiple classification algorithms  
 `ml-projects/end-to-end-ml-classification.ipynb`
+
+-----------------------------------------------------------------------------------
+
+### Deep Learning
+**CNN Image Classification** *(University Project)*
+- Image preprocessing, CNN architecture design, training, and evaluation  
+`deep-learning-projects/cnn-image-classification.ipynb`
