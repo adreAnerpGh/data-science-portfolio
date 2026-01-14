@@ -32,3 +32,16 @@ Each project follows a structured workflow, from data collection and cleaning to
 **CNN Image Classification** *(University Project)*
 - Image preprocessing, CNN architecture design, training, and evaluation  
 `deep-learning-projects/cnn-image-classification.ipynb`
+
+-----------------------------------------------------------------------------------
+
+### Natural Language Processing & AI
+**Text Processing with spaCy** *(University Project)*  
+- Tokenization, lemmatization, and linguistic analysis  
+`nlp-projects/spacy-text-processing.ipynb`
+
+**RAG-Based Agentive AI System** *(University Project)*  
+- Retrieval-Augmented Generation pipeline for document-based question answering  
+`nlp-projects/rag-agentive-ai.ipynb`
+
+---
