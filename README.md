@@ -50,8 +50,14 @@ Each project follows a structured workflow, from data collection and cleaning to
 **US Election Data Analysis** *(University Project)*  
 - Data collection from public sources  
 - Data cleaning, merging, EDA, and focused analytical questions  
-📁 `data-wrangling-projects/us-election-analysis.ipynb`
+  `data-wrangling-projects/us-election-analysis.ipynb`
 
 -----------------------------------------------------------------------------------
+
+### Probability & Statistics
+**Statistical Analysis of Football Salaries (2023-24 Season)**
+- Correlation, ANOVA, and hypothesis testing on football player salaries
+- [View HTML report](stats-projects/football_salaries_stats.html)
+- [Source R Markdown](stats-projects/football_salaries_stats.Rmd)
 
 
