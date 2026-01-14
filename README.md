@@ -31,18 +31,18 @@ Each project follows a structured workflow, from data collection and cleaning to
 ### Deep Learning
 **CNN Image Classification** *(University Project)*
 - Image preprocessing, CNN architecture design, training, and evaluation  
-`deep-learning-projects/cnn-image-classification.ipynb`
+[deep-learning-projects/cnn-image-classification.ipynb](deep-learning-projects/cnn-image-classification.ipynb)
 
 -----------------------------------------------------------------------------------
 
 ### Natural Language Processing & AI
 **Text Processing with spaCy** *(University Project)*  
 - Tokenization, lemmatization, and linguistic analysis  
-`nlp-projects/spacy-text-processing.ipynb`
+[nlp-projects/spacy-text-processing.ipynb](nlp-projects/spacy-text-processing.ipynb)
 
 **RAG-Based Agentive AI System** *(University Project)*  
 - Retrieval-Augmented Generation pipeline for document-based question answering  
-`nlp-projects/rag-agentive-ai.ipynb`
+  -  [nlp-projects/rag-agentive-ai.ipynb](nlp-projects/rag-agentive-ai.ipynb)
 
 -----------------------------------------------------------------------------------
 
@@ -50,15 +50,30 @@ Each project follows a structured workflow, from data collection and cleaning to
 **US Election Data Analysis** *(University Project)*  
 - Data collection from public sources  
 - Data cleaning, merging, EDA, and focused analytical questions  
-  `data-wrangling-projects/us-election-analysis.ipynb`
+  - [data-wrangling-projects/us-election-analysis.ipynb](data-wrangling-projects/us-election-analysis.ipynb)
 
 -----------------------------------------------------------------------------------
 
-### Probability & Statistics
+### Probability & Statistics 
+**Statistical Analysis of Football Salaries (2023-24 Season)** 
+- Correlation, ANOVA, and hypothesis testing on football player salaries
+  - [stats-projects/football_salaries_stats.html](stats-projects/football_salaries_stats.html)
+  - [stats-projects/football_salaries_stats.Rmd](stats-projects/football_salaries_stats.Rmd)
+
 **Statistical Analysis of Football Salaries (2023-24 Season)**
 - Correlation, ANOVA, and hypothesis testing on football player salaries
-- [stats-projects/football_salaries_stats.html](stats-projects/football_salaries_stats.html)
-- [stats-projects/football_salaries_stats.Rmd](stats-projects/football_salaries_stats.Rmd)
+  - [stats-projects/MATH9102_MLR_FootballSalaries.html](stats-projects/MATH9102_MLR_FootballSalaries.html)
+  - [stats-projects/MATH9102_MLR_FootballSalaries.Rmd](stats-projects/MATH9102_MLR_FootballSalaries.Rmd)
+
+**Binary Logistic Regression Analysis - Football Salaries Dataset**
+- Logistic regression to examine salary predictors
+  - [stats-projects/MATH9102_LOGR_FootballSalaries.html](stats-projects/MATH9102_LOGR_FootballSalaries.html)
+  - [stats-projects/MATH9102_LOGR_FootballSalaries.Rmd](stats-projects/MATH9102_LOGR_FootballSalaries.Rmd)
+
+**Dimension Reduction Analysis - Website Satisfaction Survey**
+- PCA/dimension reduction on survey responses (interactivity, navigation, typography, color)
+  - [stats-projects/MATH9102_DIMR_WebsiteSatisfaction.html](stats-projects/MATH9102_DIMR_WebsiteSatisfaction.html)
+  - [stats-projects/MATH9102_DIMR_WebsiteSatisfaction.Rmd](stats-projects/MATH9102_DIMR_WebsiteSatisfaction.Rmd)
 
 
 
