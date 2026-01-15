@@ -7,7 +7,7 @@ Each project follows a structured workflow, from data collection and cleaning to
 
 ## Skills & Tools
 
-- **Programming:** Python  
+- **Programming:** Python, R  
 - **Data Analysis:** Pandas, NumPy  
 - **Data Visualization:** Matplotlib, Seaborn, Tableau  
 - **Machine Learning:** Scikit-learn (KNN, Random Forest, Naïve Bayes, SVM)  
@@ -47,31 +47,37 @@ Each project follows a structured workflow, from data collection and cleaning to
 -----------------------------------------------------------------------------------
 
 ### Data Wrangling & Exploratory Analysis
-**US Election Data Analysis** *(University Project)*  
-- Data collection from public sources  
-- Data cleaning, merging, EDA, and focused analytical questions  
+**US Presidential Election Data Analysis (1976–2024** *(University Project)*  
+- Data collection from Kaggle and Wikipedia public sources  
+- Data cleaning, merging historical (1976–2020) and 2024 election data, and exploratory data analysis (EDA)
+- Implemented in R (Jupyter Notebook)
   - [data-wrangling-projects/us-election-analysis.ipynb](data-wrangling-projects/us-election-analysis.ipynb)
 
 -----------------------------------------------------------------------------------
 
 ### Probability & Statistics 
-**Statistical Analysis of Football Salaries (2023-24 Season)** 
+
+**Statistical Analysis of Football Salaries (2023-24 Season)** *(University Project)* 
 - Correlation, ANOVA, and hypothesis testing on football player salaries
+- Implemented in R
   - [stats-projects/football_salaries_stats.html](stats-projects/football_salaries_stats.html)
   - [stats-projects/football_salaries_stats.Rmd](stats-projects/football_salaries_stats.Rmd)
 
-**Statistical Analysis of Football Salaries (2023-24 Season)**
-- Correlation, ANOVA, and hypothesis testing on football player salaries
+**Multiple Linear Regression Analysis – Football Salaries Dataset** *(University Project)*
+- Multiple linear regression modelling to identify key salary predictors
+- Implemented in R
   - [stats-projects/MATH9102_MLR_FootballSalaries.html](stats-projects/MATH9102_MLR_FootballSalaries.html)
   - [stats-projects/MATH9102_MLR_FootballSalaries.Rmd](stats-projects/MATH9102_MLR_FootballSalaries.Rmd)
 
 **Binary Logistic Regression Analysis - Football Salaries Dataset**
 - Logistic regression to examine salary predictors
+- Implemented in R
   - [stats-projects/MATH9102_LOGR_FootballSalaries.html](stats-projects/MATH9102_LOGR_FootballSalaries.html)
   - [stats-projects/MATH9102_LOGR_FootballSalaries.Rmd](stats-projects/MATH9102_LOGR_FootballSalaries.Rmd)
 
 **Dimension Reduction Analysis - Website Satisfaction Survey**
 - PCA/dimension reduction on survey responses (interactivity, navigation, typography, color)
+- Implemented in R
   - [stats-projects/MATH9102_DIMR_WebsiteSatisfaction.html](stats-projects/MATH9102_DIMR_WebsiteSatisfaction.html)
   - [stats-projects/MATH9102_DIMR_WebsiteSatisfaction.Rmd](stats-projects/MATH9102_DIMR_WebsiteSatisfaction.Rmd)
 
