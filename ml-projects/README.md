@@ -1,4 +1,4 @@
-*Bank Marketing Campaign Classifier*
+# Bank Marketing Campaign Classifier
 
 This project builds and compares several machine learning models to predict the outcome of a bank marketing campaign using structured customer data.
 
