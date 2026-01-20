@@ -2,21 +2,29 @@
 
 This project builds and **compares** several machine learning models to predict the outcome of a bank marketing campaign using structured customer data.
 
-This project focuses on exploration and comparison of models, rather than optimisation for a production setting.
+This project focuses on **exploration and comparison of models**, rather than optimisation for a production setting.
 
-The dataset has a strong class imbalance and a mix of numerical and categorical features, so accuracy alone is not sufficient and the analysis focuses on recall, precision, F1 score, and ROC-AUC. 
+The dataset has a **strong class imbalance** and a mix of numerical and categorical features, so accuracy alone is not sufficient and the analysis focuses on **recall, precision, F1 score, and ROC-AUC**. 
 
-A range of common and well-understood models are tested to see how they behave under class imbalance, from simple baselines such as K-Nearest Neighbours and Naive Bayes to more flexible models like Random Forest, Support Vector Machines, and XGBoost. Different imbalance handling methods, including resampling and class weighting, are also explored to understand their impact on model performance and generalisation.
+To ensure a **fair and controlled comparison**, the same preprocessing steps, **train/test split**, imbalance strategies, and evaluation metrics are applied consistently across all models. This allows differences in results to be attributed to **model behaviour**, rather than changes in the pipeline.
 
-Model evaluation is performed using a clear train/test split. Training results are used to understand model behaviour and overfitting, while conclusions are based on test-set performance. For selected models, decision thresholds are explored to illustrate recall–precision trade-offs.
+A range of **common and well-understood models** are tested to see how they behave under class imbalance, from simple baselines such as **K-Nearest Neighbours** and **Naive Bayes** to more flexible models like **Random Forest**, **Support Vector Machines**, and **XGBoost**. Different imbalance handling methods, including **resampling** and **class weighting**, are also explored to understand their impact on model performance and generalisation.
 
-This notebook is intentionally more detailed than a production pipeline. In a real deployment, the workflow would typically be simplified by selecting fewer models, choosing a single imbalance-handling strategy, and adding monitoring and validation steps. All preprocessing, training, evaluation, and prediction steps are contained in the notebook, which can be run end-to-end in a standard Python environment.
+Model evaluation is performed using a **clear train/test split**. Training results are used to understand model behaviour and **overfitting**, while conclusions are based on **test-set performance**. For selected models, **decision thresholds** are explored to illustrate **recall–precision trade-offs**.
+
+This notebook is intentionally **more detailed than a production pipeline**. In a real deployment, the workflow would typically be simplified by selecting fewer models, choosing a **single imbalance-handling strategy**, and adding **monitoring and validation steps**. All preprocessing, training, evaluation, and prediction steps are contained in the notebook, which can be run **end-to-end** in a standard Python environment.
 
 
 ## Technical Notes and Reflection
 
-This project explored multiple models and imbalance-handling strategies in an academic setting. Some choices, such as testing K-Nearest Neighbours, Random Forest, SVM, and XGBoost with SMOTE and SMOTE-ENN, were intentionally exploratory to understand how models behave under class imbalance and how evaluation metrics change.
+This project was developed in an **academic and exploratory context**, with the goal of understanding how different models and imbalance-handling strategies behave on a **challenging, imbalanced dataset**. Techniques such as **SMOTE** and **SMOTE-ENN** were included deliberately to observe how resampling affects both model learning and evaluation metrics.
 
-Training results were used diagnostically to observe overfitting and model sensitivity, but final assessments were always based on held-out test performance. Threshold tuning and multiple resampling strategies were included to demonstrate trade-offs, though in a production system these would typically be simplified.
+While **training-set results** are reported throughout the analysis, they are used only to diagnose **overfitting** and model sensitivity. It is important to note that **training performance—particularly after resampling—can be misleading**. Methods such as **SMOTE-ENN** alter the training distribution by removing difficult or borderline samples, which can lead to **artificially high training scores** that do not reflect real-world performance.
 
-Overall, the work is technically ambitious and shows broad coverage, experimentation, and understanding. In a production pipeline, the workflow would focus on fewer models, a single imbalance-handling method, and careful monitoring, while avoiding reliance on training-set performance to justify decisions.
+For this reason, **model comparisons and final assessments rely on test-set results**, which provide a **more reliable indication of generalisation**. Some exploratory choices add complexity that would not be appropriate in production, but they serve to highlight **important trade-offs and limitations** when working with imbalanced data.
+
+
+
+
+
+
