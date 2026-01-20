@@ -23,9 +23,9 @@ While **training-set results** are reported throughout the analysis, they are us
 
 For this reason, **model comparisons and final assessments rely on test-set results**, which provide a **more reliable indication of generalisation**. Some exploratory choices add complexity that would not be appropriate in production, but they serve to highlight **important trade-offs and limitations** when working with imbalanced data.
 
-## 
+## Focused XGBoost Pipeline – Follow-up Project
 
-[**bank_marketing_xgboost_pipeline**](#ml-projects/bank_marketing_xgboost_pipeline)
+[ml-projects/bank_marketing_xgboost_pipeline](ml-projects/bank_marketing_xgboost_pipeline.ipynb)
 
 This notebook is a **focused follow-up** to the original project, showcasing a **single, strong XGBoost pipeline** with the same preprocessing and evaluation standards. It removes the multiple model comparisons, emphasizes **class imbalance handling**, and demonstrates a **clean, reproducible workflow** suitable for a **practical application**.
 
