@@ -25,7 +25,7 @@ For this reason, **model comparisons and final assessments rely on test-set resu
 
 ## 
 
-[**bank_marketing_campaign_xgboost**](#)
+[**bank_marketing_xgboost_pipeline**](#ml-projects/bank_marketing_xgboost_pipeline)
 
 This notebook is a **focused follow-up** to the original project, showcasing a **single, strong XGBoost pipeline** with the same preprocessing and evaluation standards. It removes the multiple model comparisons, emphasizes **class imbalance handling**, and demonstrates a **clean, reproducible workflow** suitable for a **practical application**.
 
