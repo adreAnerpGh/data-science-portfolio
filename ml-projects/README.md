@@ -19,7 +19,7 @@ This notebook is intentionally **more detailed than a production pipeline**. In 
 
 This project was developed in an **academic and exploratory context**, with the goal of understanding how different models and imbalance-handling strategies behave on a **challenging, imbalanced dataset**. Techniques such as **SMOTE** and **SMOTE-ENN** were included deliberately to observe how resampling affects both model learning and evaluation metrics.
 
-While **training-set results** are reported throughout the analysis, they are used only to diagnose **overfitting** and model sensitivity. It is important to note that **training performance—particularly after resampling—can be misleading**. Methods such as **SMOTE-ENN** alter the training distribution by removing difficult or borderline samples, which can lead to **artificially high training scores** that do not reflect real-world performance.
+While **training-set results** are reported throughout the analysis, they are used only to diagnose **overfitting** and model sensitivity. It is important to note that **training performance (particularly after resampling)can be misleading**. Methods such as **SMOTE-ENN** alter the training distribution by removing difficult or borderline samples, which can lead to **artificially high training scores** that do not reflect real-world performance.
 
 For this reason, **model comparisons and final assessments rely on test-set results**, which provide a **more reliable indication of generalisation**. Some exploratory choices add complexity that would not be appropriate in production, but they serve to highlight **important trade-offs and limitations** when working with imbalanced data.
 
