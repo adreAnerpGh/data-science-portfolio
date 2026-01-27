@@ -8,7 +8,7 @@ This folder contains applied statistics projects developed for university course
 - Exploratory and inferential analysis of football player salaries  
 - Correlation analysis, t-tests, ANOVA, and non-parametric tests  
 - Focus on reputation, age, nationality, and league effects  
-  - [stats-projects/football_salaries_stats.html](stats-projects/football_salaries_stats.html)  
+  - [stats-projects/football_salaries_stats.html](stats-projects/football_salaries_stats.html)
   - [stats-projects/football_salaries_stats.Rmd](stats-projects/football_salaries_stats.Rmd)
 
 ---
@@ -17,7 +17,7 @@ This folder contains applied statistics projects developed for university course
 - Salary modelling using multiple linear regression  
 - Log-transformed outcome, diagnostics, multicollinearity checks  
 - Interpretation of coefficients and model fit  
-  - [stats-projects/MATH9102_MLR_FootballSalaries.html](stats-projects/MATH9102_MLR_FootballSalaries.html)  
+  - [stats-projects/MATH9102_MLR_FootballSalaries.html](stats-projects/MATH9102_MLR_FootballSalaries.html)
   - [stats-projects/MATH9102_MLR_FootballSalaries.Rmd](stats-projects/MATH9102_MLR_FootballSalaries.Rmd)
 
 ---
@@ -25,7 +25,7 @@ This folder contains applied statistics projects developed for university course
 **Binary Logistic Regression – Football Salaries Dataset**  
 - Binary outcome modelling for high vs low salary groups  
 - Odds ratios, goodness-of-fit, and classification performance  
-  - [stats-projects/MATH9102_LOGR_FootballSalaries.html](stats-projects/MATH9102_LOGR_FootballSalaries.html)  
+  - [stats-projects/MATH9102_LOGR_FootballSalaries.html](stats-projects/MATH9102_LOGR_FootballSalaries.html)
   - [stats-projects/MATH9102_LOGR_FootballSalaries.Rmd](stats-projects/MATH9102_LOGR_FootballSalaries.Rmd)
 
 ---
@@ -34,5 +34,5 @@ This folder contains applied statistics projects developed for university course
 - Principal Component Analysis (PCA) with varimax rotation  
 - Identification of latent satisfaction dimensions  
 - Reliability analysis using Cronbach’s alpha  
-  - [stats-projects/MATH9102_DIMR_WebsiteSatisfaction.html](stats-projects/MATH9102_DIMR_WebsiteSatisfaction.html)  
+  - [stats-projects/MATH9102_DIMR_WebsiteSatisfaction.html](stats-projects/MATH9102_DIMR_WebsiteSatisfaction.html)
   - [stats-projects/MATH9102_DIMR_WebsiteSatisfaction.Rmd](stats-projects/MATH9102_DIMR_WebsiteSatisfaction.Rmd)
