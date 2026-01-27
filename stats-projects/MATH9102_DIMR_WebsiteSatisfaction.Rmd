@@ -458,4 +458,3 @@ Tavakol, M., & Dennick, R. (2011). Making sense of Cronbach's alpha. Internation
 Weiss, D. J., & Dawis, R. V. (2007). Assessing the reliability of scales in the Minnesota Satisfaction Questionnaire. Journal of Applied Psychology, 92, 111–122.
 
 Bradburn, N. M., Sudman, S., & Wansink, B. (2004). Asking questions: The definitive guide to questionnaire design (2nd ed.). Jossey-Bass.
-

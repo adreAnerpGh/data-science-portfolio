@@ -1429,4 +1429,3 @@ Pallant, J. (2020). SPSS Survival Manual: A Step-by-Step Guide to Data Analysis 
 Watson, D., Clark, L. A., & Tellegen, A. (1988). Development and validation of brief measures of positive and negative affect: The PANAS scales. Journal of Personality and Social Psychology, 54(6), 1063–1070.
 
 Tabachnik, B. G., & Fidell, L. S. (2013). Using Multivariate Statistics (6th ed.). Pearson Education.
-

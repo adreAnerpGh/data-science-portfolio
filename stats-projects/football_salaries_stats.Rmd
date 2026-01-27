@@ -1120,4 +1120,3 @@ Tabachnick, B. G., & Fidell, L. S. (2012). Using multivariate statistics (6th ed
 Watson, D., Clark, L. A., & Tellegen, A. (1988). Development and validation of brief measures of positive and negative affect: The PANAS scales. Journal of Personality and Social Psychology, 54(6), 1063–1070.
 
 Welch, B. L. (1951). On the comparison of several mean values: An alternative approach to the analysis of variance. Biometrika, 38(3/4), 330-336.
-
