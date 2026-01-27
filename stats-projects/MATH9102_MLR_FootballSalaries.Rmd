@@ -1,7 +1,7 @@
 ---
 title: "Statistical Analysis - Multiple Linear Regression - Football Salaries Dataset"
 subtitle: "PSI CA Part Three - Linear Regression"
-author: "Andrea Gehrpelli"
+author: "Andrea Gherpelli"
 date: ""
 output:
   html_document:
@@ -1453,5 +1453,6 @@ Field, A., Field, Z., & Miles, J. (2020). Discovering statistics using IBM SPSS 
 Pallant, J. (2020). Survival manual: A step by step guide to data analysis using SPSS (7th ed.). Taylor & Francis. 
 
 Scheier, M.F. & Carver, C.S. (1985). Optimism, coping and health: An assessment and implications of generalized outcome expectancies. Health Psychology, 4, 219–47. 
+
 
 Tabachnik, B.G., & Fidell, L.S. (2013). Using Multivariate Statistics (6th ed.). Pearson.
