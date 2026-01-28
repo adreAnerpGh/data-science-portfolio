@@ -685,7 +685,7 @@ The 95% confidence interval for the correlation is between 0.842 and 0.848, sugg
 
 -   Ha: There is a correlation between players' current age and their annual salary.
 
--   Variables: Reputation (Continuous), Transformed Salary (Continuous)
+-   Variables: Age(Continuous), Transformed Salary (Continuous)
 
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
 # Scatter plot for Salary vs. Age
@@ -695,7 +695,7 @@ ggplot(data, aes(x = Age, y = log_salary)) +
   labs(title = "Scatter Plot of Salary vs. Age", x = "Age", y = "Salary")
 ```
 
-Since both variables are continuous and Salary is non-normal, we use Spearman correlation to test for correlation.
+Since both variables are continuous and Salary has been log-transformed to meet normality assumptions, Pearson’s correlation was used to test for the relationship between Age and Salary.
 
 ```{r, warning=FALSE, message=FALSE}
 # Pearson correlation test for Reputation and Transformed Salary
@@ -928,15 +928,14 @@ This result indicates that the mean log-transformed salaries differ across at le
 To determine which specific categories of Based differ significantly in their mean log_salary, post-hoc tests are necessary. Since Welch's ANOVA suggests unequal variances among groups, the Games-Howell post-hoc test is the most appropriate choice. This test is robust to heteroscedasticity and unequal group sizes and will allow for pairwise comparisons to identify significant differences between categories.
 
 ```{r, warning=FALSE, message=FALSE}
-# install.packages("rstatix")
 library(rstatix)
 
-# Perform Games-Howell post-hoc test for pairwise comparisons
+# Perform Games–Howell post-hoc test for pairwise comparisons
 games_howell_result <- filtered_data %>%
-  dunn_test(log_salary ~ Based, p.adjust.method = "bonferroni")
+  games_howell_test(log_salary ~ Based)
 
 # Print the results
-print(games_howell_result,100)
+print(games_howell_result, n = 100)
 ```
 
 ```{r}
@@ -954,7 +953,7 @@ summary_stats_pair4 <- filtered_data %>%
 kable(summary_stats_pair4, format = "markdown", col.names = c("League/Nation", "Mean (Log Salary)", "SD (Log Salary)"))
 ```
 
-The analysis focused on comparing player salary data across various league pairings. The test statistic results (p-values) provide insights into whether there are significant salary differences between leagues. Leagues with asterisks next to their p-values indicate statistically significant differences in salaries between the two leagues. The number of stars corresponds to the strength of this significance. Leagues marked as "ns" (not significant) show no evidence of salary differences at a reasonable confidence level.
+The analysis focused on comparing player salary data across various league pairings. The Games–Howell post-hoc results indicate which pairs of leagues differ significantly in their **mean log-transformed salaries**, accounting for unequal variances and group sizes. Leagues with asterisks next to their p-values indicate statistically significant differences in salaries between the two leagues. The number of stars corresponds to the strength of this significance. Leagues marked as "ns" (not significant) show no evidence of salary differences at a reasonable confidence level.
 
 **Observations**:
 
@@ -1045,7 +1044,7 @@ Since the p-value is far below the 0.05 significance level, we reject the null h
 
 -   Variables: EU National (Binary Nominal), Based (Nominal with multiple categories)
 
--   *Conclusion*: A chi-square test of independence revealed a statistically significant association between EU nationality and the league/nation (Based) where the club is located (𝜒2=21,868, df=805, p\<0.001). This result provides evidence to reject the null hypothesis in favor of the alternative hypothesis. The association indicates that players' nationalities (EU or non-EU) are significantly related to the leagues or nations in which they play, likely reflecting regional preferences or work eligibility cons
+-   *Conclusion*: A chi-square test of independence revealed a statistically significant association between EU nationality and the league/nation (Based) where the club is located (𝜒2=21,868, df=805, p\<0.001). Fisher’s Exact Test with simulated p-values was used as a robustness check and produced a consistent result. This provides evidence to reject the null hypothesis in favour of the alternative hypothesis. The observed association indicates that players’ nationalities (EU or non-EU) are significantly related to the leagues or nations in which they play, likely reflecting regional labour market structures, work permit regulations, and eligibility requirements across different football leagues.
 
 **Pair 4**
 
@@ -1060,7 +1059,7 @@ Since the p-value is far below the 0.05 significance level, we reject the null h
     The mean and standard deviation of log-transformed salaries for each group are as follows:
 
     |  |  |  |
-    |------------------------------------|------------------|------------------|
+    |-----------------------------------|-------------------|-------------------|
     | **League/Nation (Based)** | **Mean (Log Salary)** | **SD (Log Salary)** |
     | England (Premier League) | 14 | 1.83 |
     | France (Ligue 1) | 13.01 | 1.76 |
