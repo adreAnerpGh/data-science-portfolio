@@ -1,0 +1,120 @@
+--- doc_28.txt ---
+sustainable: 0.3843
+green: 0.3127
+movement: 0.2405
+solutions: 0.2032
+corporations: 0.1995
+global: 0.1380
+gggi: 0.1330
+entrepreneurs: 0.1330
+growth: 0.1317
+initiative: 0.1287
+
+--- doc_07.txt ---
+transportation: 0.2578
+sustainable: 0.2472
+asia: 0.2385
+electric: 0.2281
+ambitious: 0.2112
+project: 0.1908
+vehicles: 0.1711
+cities: 0.1711
+solutions: 0.1452
+achieve: 0.1341
+
+--- doc_33.txt ---
+health: 0.2834
+african: 0.2720
+africa: 0.2720
+healthcare: 0.2687
+crisis: 0.1894
+continent: 0.1886
+pandemic: 0.1680
+limited: 0.1619
+resilient: 0.1337
+kiiru: 0.1203
+
+--- doc_38.txt ---
+poverty: 0.5655
+global: 0.2236
+sustainable: 0.1557
+social: 0.1317
+existing: 0.1251
+inequality: 0.1203
+investing: 0.1203
+systemic: 0.1169
+development: 0.1123
+communities: 0.1120
+
+--- doc_31.txt ---
+gig: 0.5506
+economy: 0.2805
+workforce: 0.2380
+models: 0.2294
+meta: 0.2294
+traditional: 0.2263
+job: 0.1535
+companies: 0.1293
+workers: 0.1245
+independent: 0.1151
+
+--- doc_21.txt ---
+food: 0.5879
+involves: 0.2355
+hunger: 0.2041
+weather: 0.1633
+security: 0.1454
+instability: 0.1447
+dire: 0.1447
+climate: 0.1408
+systems: 0.1326
+farmers: 0.1302
+
+--- doc_04.txt ---
+hurricane: 0.4887
+season: 0.3258
+caribbean: 0.2715
+storms: 0.2715
+disasters: 0.1629
+devastating: 0.1469
+natural: 0.1462
+affected: 0.1363
+aid: 0.1096
+preparedness: 0.1086
+
+--- doc_44.txt ---
+bioprinting: 0.4107
+healthcare: 0.2949
+ai: 0.2455
+diseases: 0.2122
+organs: 0.1760
+tissues: 0.1760
+health: 0.1185
+early: 0.1173
+initiative: 0.1136
+artificial: 0.1136
+
+--- doc_49.txt ---
+tech: 0.6029
+battle: 0.2269
+green: 0.1701
+waste: 0.1628
+companies: 0.1529
+planet: 0.1461
+environmental: 0.1206
+vocal: 0.1085
+titans: 0.1085
+declaration: 0.1085
+
+--- doc_27.txt ---
+violations: 0.4099
+rights: 0.3710
+human: 0.2950
+shadows: 0.2450
+conflict: 0.1368
+resulted: 0.1361
+collective: 0.1237
+humanitarian: 0.1237
+unchecked: 0.1225
+abuses: 0.1225
+
