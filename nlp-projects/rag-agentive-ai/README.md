@@ -12,7 +12,6 @@ The system supports an **advanced mode** with multi-turn conversation context an
 ## Key Dependencies
 
 - **[Streamlit](https://streamlit.io/):** Web interface for interactive queries.  
-- **[FAISS](https://github.com/facebookresearch/faiss):** Vectorstore for efficient similarity search.  
 - **[Ollama LLM](https://ollama.com/):** Local language model for query answering and summarization.  
 
 ## Running the App
