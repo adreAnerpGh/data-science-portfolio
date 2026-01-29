@@ -8,8 +8,8 @@ This is the main script for Part 4 of the assignment:
 # Import necessary libraries
 import pandas as pd
 from langchain_ollama import OllamaLLM
-from _part_4_3_FUNCTIONS import create_documents_from_df, create_vectorstore, create_vectorstore_and_save, load_vectorstore, query_loop
-from _part_4_4_ADV_FUNCTIONS import query_loop_ADV
+from _02_rag_functions import create_documents_from_df, create_vectorstore, create_vectorstore_and_save, load_vectorstore, query_loop
+from _03_adv_rag_functions import query_loop_ADV
 
 # Define whether to use advanced features or basic features
 USE_ADVANCED = True     # or False for basic features
