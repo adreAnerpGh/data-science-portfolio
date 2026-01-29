@@ -1,40 +1,25 @@
-# RAG & Agentive AI for Medical Data Analysis
+# RAG Agentive AI - Streamlit App
 
-This project implements a Retrieval-Augmented Generation (RAG) system combined with an agentive workflow to interact with a medical dataset using LLMs. Users can ask questions about the dataset, and the system decides whether to perform numeric analysis directly or retrieve relevant rows for context-aware LLM responses.
-
-## Features
-
-- Converts dataset rows into text documents for RAG retrieval.
-- Builds or loads a FAISS vectorstore for fast similarity search.
-- Supports numeric analysis (mean, sum, min, max, count, correlation) on the dataset.
-- Advanced agentic workflow decides whether to use numeric computation or RAG retrieval.
-- Multi-turn conversational context for advanced queries.
-- Streamlit app integration for interactive use.
+This folder contains a Streamlit-based app for **RAG (Retrieval-Augmented Generation) with agentive workflow**.  
+The app allows you to query medical data using either numeric analysis or free-text retrieval with a local LLM.
 
 ## Requirements
 
-- Python 3.9+
-- `pandas`
-- `streamlit`
-- `langchain_ollama`
-- `faiss` / `langchain_community.vectorstores.faiss`
+- Python 3.11+  
+- Streamlit (`pip install streamlit`)  
+- LangChain Ollama (`pip install langchain-ollama`)  
+- FAISS (`pip install faiss-cpu`)  
+- Pandas (`pip install pandas`)  
 
-## Notes
+Make sure the `faiss_vectorstore` and dataset files (`patients.csv`, `index.csv`) are present in the folder.
 
-- The embeddings model `gemma:2b` is used for both LLM inference and vector embeddings.
-- The dataset (`patients.csv`) and feature dictionary (`index.csv`) are expected in `data_Part_4/`.
-- The FAISS vectorstore should be created once and can be loaded from disk to avoid recomputation.
-- **Pre-trained embeddings file `glove.6B.100d.txt` is not included in this repository**. Use the link provided in the code comments to download it if needed.
+## Running the App
 
-## Usage
-
-1. Load the dataset and initialize the LLM.
-2. Create or load the FAISS vectorstore.
-3. Start the query loop:
-   - Basic: free-text queries with RAG.
-   - Advanced: numeric selection or free-text queries with multi-turn context.
-4. Optionally, run via Streamlit for an interactive web interface.
+After cloning the repository:
 
 ```bash
-streamlit run app_streamlit.py
+# Navigate to the project root folder (replace <repo-folder> with your path)
+cd <repo-folder>
 
+# Run the Streamlit app
+streamlit run rag-agentive-ai/app_streamlit.py
