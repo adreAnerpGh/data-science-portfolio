@@ -38,11 +38,11 @@ Each project follows a structured workflow, from data collection and cleaning to
 ### Natural Language Processing & AI
 **Text Processing with spaCy** *(University Project)*  
 - Tokenization, lemmatization, and linguistic analysis  
-[nlp-projects/spacy-text-processing.ipynb](nlp-projects/spacy-text-processing.ipynb)
+[nlp-projects/spacy-text-processing](nlp-projects/spacy-text-processing/)
 
 **RAG-Based Agentive AI System** *(University Project)*  
 - Retrieval-Augmented Generation pipeline for document-based question answering  
-  -  [nlp-projects/rag-agentive-ai.ipynb](nlp-projects/rag-agentive-ai.ipynb)
+  -  [nlp-projects/rag-agentive-ai](nlp-projects/rag-agentive-ai/)
 
 -----------------------------------------------------------------------------------
 
