@@ -23,7 +23,7 @@ Key themes:
 ## Subprojects
 
 ### 1. Age Estimator — CNNs from Scratch
-[age-estimator/](age-estimator/)
+[1. age-estimator/](1. age-estimator/)
 
 An end-to-end CNN project where multiple architectures are **designed, trained, and evaluated from scratch** on facial images.
 
@@ -43,7 +43,7 @@ An end-to-end CNN project where multiple architectures are **designed, trained, 
 All models are evaluated on a held-out test set, and the **best-performing architectures are selected and compared against baselines**.
 
 ### 2. Backbone Models and Fine-Tuning
-[backbone_model-and-fine-tuning/](backbone_model-and-fine-tuning/)
+[2. backbone_model-and-fine-tuning/](2. backbone_model-and-fine-tuning/)
 
 A continuation of the previous project, focusing on **transfer learning** using pretrained CNN backbones.
 
