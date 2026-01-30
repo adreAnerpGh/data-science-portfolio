@@ -80,6 +80,13 @@ Each project follows a structured workflow, from data collection and cleaning to
 - Implemented in R
   - [stats-projects/MATH9102_DIMR_WebsiteSatisfaction.html](stats-projects/MATH9102_DIMR_WebsiteSatisfaction.html)
   - [stats-projects/MATH9102_DIMR_WebsiteSatisfaction.Rmd](stats-projects/MATH9102_DIMR_WebsiteSatisfaction.Rmd)
+ 
+### Computer Vision
+**Classical Image Analysis with scikit-image** *(University Project)*
+- Image preprocessing, feature extraction, and segmentation using Python and scikit-image  
+[computer-vision-projects/classical-image-analysis-skimage/](computer-vision-projects/classical-image-analysis-skimage/)
 
-
-
+### Time Series Analysis
+**Emigration Patterns Analysis with Pandas** *(University Project)*
+- Time series exploration, demographic insights, and outlier detection on emigration data  
+[time-series-analysis-projects/emigration-patterns-pandas/](time-series-analysis-projects/emigration-patterns-pandas/)
