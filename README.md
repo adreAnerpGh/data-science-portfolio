@@ -60,6 +60,8 @@ Each project follows a structured workflow, from data collection and cleaning to
 
 ### Probability & Statistics 
 
+[stats-projects](stats-projects)
+
 **Statistical Analysis of Football Salaries (2023-24 Season)** *(University Project)* 
 - Correlation, ANOVA, and hypothesis testing on football player salaries
 - Implemented in R
@@ -68,7 +70,7 @@ Each project follows a structured workflow, from data collection and cleaning to
 **Multiple Linear Regression Analysis – Football Salaries Dataset** *(University Project)*
 - Multiple linear regression modelling to identify key salary predictors
 - Implemented in R
-  - [MATH9102_MLR_FootballSalaries.html](ttps://htmlpreview.github.io/?https://github.com/adreAnerpGh/data-science-portfolio/blob/main/stats-projects/MATH9102_MLR_FootballSalaries.html)
+  - [MATH9102_MLR_FootballSalaries.html](https://htmlpreview.github.io/?https://github.com/adreAnerpGh/data-science-portfolio/blob/main/stats-projects/MATH9102_MLR_FootballSalaries.html)
 
 **Binary Logistic Regression Analysis - Football Salaries Dataset**
 - Logistic regression to examine salary predictors
