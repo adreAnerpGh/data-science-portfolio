@@ -63,23 +63,22 @@ Each project follows a structured workflow, from data collection and cleaning to
 **Statistical Analysis of Football Salaries (2023-24 Season)** *(University Project)* 
 - Correlation, ANOVA, and hypothesis testing on football player salaries
 - Implemented in R
-  - 🔗 [football_salaries_stats.html](https://htmlpreview.github.io/?https://github.com/adreAnerpGh/data-science-portfolio/blob/main/stats-projects/football_salaries_stats.html)  
-  - [stats-projects/football_salaries_stats.html](stats-projects/football_salaries_stats.html)
-
+  - [football_salaries_stats.html](https://htmlpreview.github.io/?https://github.com/adreAnerpGh/data-science-portfolio/blob/main/stats-projects/football_salaries_stats.html)
+  
 **Multiple Linear Regression Analysis – Football Salaries Dataset** *(University Project)*
 - Multiple linear regression modelling to identify key salary predictors
 - Implemented in R
-  - [stats-projects/MATH9102_MLR_FootballSalaries.html](stats-projects/MATH9102_MLR_FootballSalaries.html)
+  - [MATH9102_MLR_FootballSalaries.html](ttps://htmlpreview.github.io/?https://github.com/adreAnerpGh/data-science-portfolio/blob/main/stats-projects/MATH9102_MLR_FootballSalaries.html)
 
 **Binary Logistic Regression Analysis - Football Salaries Dataset**
 - Logistic regression to examine salary predictors
 - Implemented in R
-  - [stats-projects/MATH9102_LOGR_FootballSalaries.html](stats-projects/MATH9102_LOGR_FootballSalaries.html)
+  - [MATH9102_LOGR_FootballSalaries.html](https://htmlpreview.github.io/?https://github.com/adreAnerpGh/data-science-portfolio/blob/main/stats-projects/MATH9102_LOGR_FootballSalaries.html)
 
 **Dimension Reduction Analysis - Website Satisfaction Survey**
 - PCA/dimension reduction on survey responses (interactivity, navigation, typography, color)
 - Implemented in R
-  - [stats-projects/MATH9102_DIMR_WebsiteSatisfaction.html](stats-projects/MATH9102_DIMR_WebsiteSatisfaction.html)
+  - [MATH9102_DIMR_WebsiteSatisfaction.html](https://htmlpreview.github.io/?https://github.com/adreAnerpGh/data-science-portfolio/blob/main/stats-projects/MATH9102_DIMR_WebsiteSatisfaction.html)
  
 ### Computer Vision
 
