@@ -63,6 +63,7 @@ Each project follows a structured workflow, from data collection and cleaning to
 **Statistical Analysis of Football Salaries (2023-24 Season)** *(University Project)* 
 - Correlation, ANOVA, and hypothesis testing on football player salaries
 - Implemented in R
+  - 🔗 [football_salaries_stats.html](https://htmlpreview.github.io/?https://github.com/adreAnerpGh/data-science-portfolio/blob/main/stats-projects/football_salaries_stats.html)  
   - [stats-projects/football_salaries_stats.html](stats-projects/football_salaries_stats.html)
 
 **Multiple Linear Regression Analysis – Football Salaries Dataset** *(University Project)*
