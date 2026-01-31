@@ -54,7 +54,7 @@ Each project follows a structured workflow, from data collection and cleaning to
 - Data collection from Kaggle and Wikipedia public sources  
 - Data cleaning, merging historical (1976–2020) and 2024 election data, and exploratory data analysis (EDA)
 - Implemented in R (Jupyter Notebook)
-  - [data-wrangling-projects/us_presidential_elections_1976_2024/](data-wrangling-projects/us_presidential_elections_1976_2024/)
+  - [us_presidential_elections_1976_2024/us-election-analysis.html](https://htmlpreview.github.io/?https://github.com/adreAnerpGh/data-science-portfolio/blob/main/data-wrangling-projects/us_presidential_elections_1976_2024/us-election-analysis.html)
 
 -----------------------------------------------------------------------------------
 
