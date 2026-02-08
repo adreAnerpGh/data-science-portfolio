@@ -23,7 +23,7 @@ The notebooks are designed to be **self-contained and reproducible**, and reflec
 - Emphasis on recall, precision, F1 score, and ROC-AUC
 
 ### Organic Product Purchase Prediction
-[ml-projects/organic_product_purchase/](ml-projects/organic_product_purchase/)
+[organic_product_purchase/](organic_product_purchase/)
 
 - Binary classification with imbalanced classes
 - Feature engineering and leakage-safe pipelines
