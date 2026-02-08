@@ -1,0 +1,4 @@
+model_name,best_params,train_score,test_score
+XGBoost,"{'classifier__learning_rate': 0.1, 'classifier__max_depth': 3, 'classifier__n_estimators': 200}",0.8056641416991128,0.80849532037437
+RandomForest,"{'classifier__max_depth': None, 'classifier__n_estimators': 200}",0.796604477484341,0.7948164146868251
+NeuralNetwork,"{'classifier__alpha': 0.001, 'classifier__hidden_layer_sizes': (100,)}",0.7635449507758214,0.7730381569474442
