@@ -28,12 +28,6 @@ Each project follows a structured workflow, from data collection and cleaning to
 
 **Organic Product Purchase Prediction** *(University Project)*
 - End-to-end machine learning project to identify customers likely to purchase organic products.
-- Binary classification with imbalanced classes
-- Feature engineering and leakage-safe pipelines
-- Model comparison (Random Forest, XGBoost, Neural Network)
-- Hyperparameter tuning with GridSearchCV
-- Threshold optimisation to prioritise recall
-
 [ml-projects/organic_product_purchase/](ml-projects/organic_product_purchase/)
 
 -----------------------------------------------------------------------------------
