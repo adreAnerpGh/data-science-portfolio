@@ -28,6 +28,7 @@ Each project follows a structured workflow, from data collection and cleaning to
 
 **Organic Product Purchase Prediction** *(University Project)*
 - End-to-end machine learning project to identify customers likely to purchase organic products
+
 [ml-projects/organic_product_purchase/](ml-projects/organic_product_purchase/)
 
 -----------------------------------------------------------------------------------
