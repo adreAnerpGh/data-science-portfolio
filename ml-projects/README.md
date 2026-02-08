@@ -20,4 +20,14 @@ The notebooks are designed to be **self-contained and reproducible**, and reflec
 - Binary classification task predicting customer response to a marketing campaign  
 - Comparison of multiple models under strong class imbalance  
 - Follow-up notebook showcasing a focused **XGBoost pipeline**  
-- Emphasis on recall, precision, F1 score, and ROC-AUC  
+- Emphasis on recall, precision, F1 score, and ROC-AUC
+
+**Organic Product Purchase Prediction** *(University Project)*
+[ml-projects/organic_product_purchase/](ml-projects/organic_product_purchase/)
+
+- Binary classification with imbalanced classes
+- Feature engineering and leakage-safe pipelines
+- Model comparison (Random Forest, XGBoost, Neural Network)
+- Hyperparameter tuning with GridSearchCV
+- Threshold optimisation to prioritise recall
+
