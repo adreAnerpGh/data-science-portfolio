@@ -33,7 +33,8 @@ Each project follows a structured workflow, from data collection and cleaning to
 - Model comparison (Random Forest, XGBoost, Neural Network)
 - Hyperparameter tuning with GridSearchCV
 - Threshold optimisation to prioritise recall
-[ml-projects/organic_product_purchase/organic-product-purchase-prediction/](ml-projects/organic_product_purchase/organic-product-purchase-prediction/)
+
+[ml-projects/organic_product_purchase/](ml-projects/organic_product_purchase/)
 
 -----------------------------------------------------------------------------------
 
