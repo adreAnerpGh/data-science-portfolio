@@ -26,6 +26,16 @@ Each project follows a structured workflow, from data collection and cleaning to
 - Comparison of multiple classification algorithms  
 [ml-projects/bank_marketing_campaign/](ml-projects/bank_marketing_campaign/)
 
+**Organic Product Purchase Prediction** *(University Project)*
+End-to-end machine learning project to identify customers likely to purchase organic products.
+- Binary classification with imbalanced classes
+- Feature engineering and leakage-safe pipelines
+- Model comparison (Random Forest, XGBoost, Neural Network)
+- Hyperparameter tuning with GridSearchCV
+- Threshold optimisation to prioritise recall
+- Final model: XGBoost with ROC-AUC ≈ 0.79
+[ml-projects/organic_product_purchase/organic-product-purchase-prediction/](ml-projects/organic_product_purchase/organic-product-purchase-prediction/)
+
 -----------------------------------------------------------------------------------
 
 ### Deep Learning
@@ -81,6 +91,8 @@ Each project follows a structured workflow, from data collection and cleaning to
 - PCA/dimension reduction on survey responses (interactivity, navigation, typography, color)
 - Implemented in R
   - [MATH9102_DIMR_WebsiteSatisfaction.html](https://htmlpreview.github.io/?https://github.com/adreAnerpGh/data-science-portfolio/blob/main/stats-projects/MATH9102_DIMR_WebsiteSatisfaction.html)
+
+-----------------------------------------------------------------------------------
  
 ### Computer Vision
 
@@ -91,8 +103,6 @@ Each project follows a structured workflow, from data collection and cleaning to
 -----------------------------------------------------------------------------------
 
 ### Time Series Analysis
-
------------------------------------------------------------------------------------
 
 **Emigration Patterns Analysis with Pandas** *(University Project)*
 - Time series exploration, demographic insights, and outlier detection on emigration data  
