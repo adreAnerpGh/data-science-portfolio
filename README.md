@@ -27,7 +27,8 @@ Each project follows a structured workflow, from data collection and cleaning to
 [ml-projects/bank_marketing_campaign/](ml-projects/bank_marketing_campaign/)
 
 **Organic Product Purchase Prediction** *(University Project)*
-End-to-end machine learning project to identify customers likely to purchase organic products.
+
+- End-to-end machine learning project to identify customers likely to purchase organic products.
 - Binary classification with imbalanced classes
 - Feature engineering and leakage-safe pipelines
 - Model comparison (Random Forest, XGBoost, Neural Network)
