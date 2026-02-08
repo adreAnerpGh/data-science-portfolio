@@ -22,7 +22,7 @@ The notebooks are designed to be **self-contained and reproducible**, and reflec
 - Follow-up notebook showcasing a focused **XGBoost pipeline**  
 - Emphasis on recall, precision, F1 score, and ROC-AUC
 
-**Organic Product Purchase Prediction** *(University Project)*
+### Organic Product Purchase Prediction
 [ml-projects/organic_product_purchase/](ml-projects/organic_product_purchase/)
 
 - Binary classification with imbalanced classes
